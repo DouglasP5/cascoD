@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Tartaruga</title>
+</head>
+<body>
+    <h1>Detalhes da Tartaruga</h1>
+    <p><strong>Anilha:</strong> {{ tartaruga.anilha }}</p>
+    <p><strong>Espécie:</strong> {{ tartaruga.especie }}</p>
+
+    <form method="POST">
+        <label for="estado">Estado:</label>
+        <input type="text" name="estado" id="estado" required>
+        <br>
+
+        <label for="data">Data:</label>
+        <input type="date" name="data" id="data" required>
+        <br>
+
+        <label for="horario">Horário:</label>
+        <input type="time" name="horario" id="horario" required>
+        <br>
+
+        <label for="praia">Praia:</label>
+        <input type="text" name="praia" id="praia" required>
+        <br>
+
+        <label for="municipio">Município:</label>
+        <input type="text" name="municipio" id="municipio" required>
+        <br>
+
+        <label for="comprimento_casco">Comprimento do Casco (cm):</label>
+        <input type="number" step="0.1" name="comprimento_casco" id="comprimento_casco" required>
+        <br>
+
+        <label for="largura_casco">Largura do Casco (cm):</label>
+        <input type="number" step="0.1" name="largura_casco" id="largura_casco" required>
+        <br>
+
+        <label for="quantidade_ovos">Quantidade de Ovos:</label>
+        <input type="number" name="quantidade_ovos" id="quantidade_ovos" required>
+        <br>
+
+        <button type="submit">Concluir Registro</button>
+    </form>
+</body>
+</html>
