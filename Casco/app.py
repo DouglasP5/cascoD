@@ -353,7 +353,3 @@ def detalhes_tartaruga(tartaruga_id):
         return redirect(url_for('dashboard'))
     
     return render_template('detalhes_tartaruga.html', tartaruga=tartaruga)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
