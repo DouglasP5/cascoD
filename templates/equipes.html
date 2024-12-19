@@ -8,6 +8,7 @@
 <body>
     <h1>Minhas Equipes</h1>
 
+    <!-- Formulário para Criar Nova Equipe -->
     <h2>Criar Equipe</h2>
     <form action="{{ url_for('equipes') }}" method="POST">
         <label for="nome">Nome da Equipe:</label>
@@ -15,7 +16,7 @@
         <button type="submit">Criar</button>
     </form>
 
-   
+    <!-- Exibir Mensagem de Sucesso ou Erro ao Criar Equipe -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul>
@@ -26,14 +27,14 @@
         {% endif %}
     {% endwith %}
 
-   
+    <!-- Lista das Equipes Criadas -->
     <h2>Equipes Criadas</h2>
     {% if equipes %}
         <ul>
         {% for equipe in equipes %}
             <li>
                 {{ equipe.nome }}
-                <a href="{{ url_for('ver_equipe', id=equipe.id) }}">Ver Mais</a> 
+                <a href="{{ url_for('ver_equipe', id=equipe.id) }}">Ver Mais</a> <!-- Botão Ver Mais -->
             </li>
         {% endfor %}
         </ul>

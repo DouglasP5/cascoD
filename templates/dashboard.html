@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - {{ usuario.username }}</title>
+    <!-- Incluindo o Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -11,7 +12,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-       
+        /* Estilo da Barra de Navegação */
         .navbar {
             background-color: #5a6268;
         }
@@ -22,7 +23,7 @@
             color: #ffcc00 !important;
         }
 
-       
+        /* Cartões */
         .card {
             border-radius: 8px;
             border: 1px solid #e0e0e0;
@@ -42,7 +43,7 @@
             color: #495057;
         }
 
-       
+        /* Estilo de botões */
         .btn-custom {
             background-color: #28a745;
             color: white;
@@ -62,7 +63,7 @@
             background-color: #138496;
         }
 
-      
+        /* Mensagem Flash */
         .alert-warning {
             background-color: #ffeeba;
             color: #856404;
@@ -72,7 +73,7 @@
             font-weight: 600;
         }
 
-       
+        /* Listagem */
         .list-group-item {
             border: none;
             border-bottom: 1px solid #f0f0f0;
@@ -89,7 +90,7 @@
             margin-top: 30px;
         }
 
-        
+        /* Melhorando a Responsividade */
         @media (max-width: 768px) {
             .card {
                 margin-bottom: 15px;
@@ -99,7 +100,7 @@
     </style>
 </head>
 <body>
-    
+    <!-- Barra de Navegação -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="{{ url_for('dashboard') }}">Dashboard</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
@@ -129,7 +130,7 @@
         </div>
     </nav>
 
-    
+    <!-- Conteúdo Principal -->
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -145,7 +146,7 @@
 
         <div class="row">
             <div class="col-lg-8 col-md-12">
-               
+                <!-- Card de boas-vindas -->
                 <div class="card">
                     <div class="card-header">
                         <h4>Bem-vindo ao Dashboard, {{ usuario.username }}</h4>
@@ -156,7 +157,7 @@
                 </div>
 
                
-               
+                <!-- Card de equipes participadas -->
                 <div class="card">
                     <div class="card-header">
                         <h5>Equipes que você participa:</h5>
@@ -178,7 +179,7 @@
                 </div>
             </div>
 
-            
+            <!-- Ações rápidas -->
             <div class="col-lg-4 col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -200,18 +201,18 @@
 
     </div>
 
-    
+    <!-- Incluindo os scripts do Bootstrap e o jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    
+    <!-- Script para remover a mensagem após 4 segundos -->
     <script>
         $(document).ready(function() {
             if ($('#flashMessage').length) {
                 setTimeout(function() {
                     $('#flashMessage').fadeOut('slow');
-                }, 4000); 
+                }, 4000); // Mensagem desaparecerá após 4 segundos
             }
         });
     </script>
