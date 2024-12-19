@@ -55,17 +55,19 @@ class RegistroTartaruga(db.Model):
     quantidade_ovos = db.Column(db.Integer, nullable=False)
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 with app.app_context():
     db.create_all()
 
 @app.before_first_request
 def criar_usuario_admin():
-    # Verifica se já existe um usuário administrador
     usuario_admin = Usuario.query.filter_by(admin=True).first()
     
     if not usuario_admin:
-        # Se não existir, cria o usuário administrador
-        senha_admin = generate_password_hash('admin123', method='sha256')  # Senha padrão do admin
+        senha_admin = generate_password_hash('admin123', method='sha256')  
         novo_admin = Usuario(username='admin', email='admin@admin.com', senha=senha_admin, tipo='participante', admin=True)
         
         db.session.add(novo_admin)
