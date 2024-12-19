@@ -3,16 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  
+app.config['SECRET_KEY'] = 'sua_chave_secreta_aqui'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://u349037776_cascudinho:cascudinhoUI1@receitadenatal.com.br/u349037776_cascudinho')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 
 class Usuario(db.Model):
@@ -62,6 +57,7 @@ class RegistroTartaruga(db.Model):
 
 with app.app_context():
     db.create_all()
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
