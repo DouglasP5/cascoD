@@ -1,28 +1,42 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Página de cadastro</title>
+    <link rel="stylesheet" href="../static/signup.css">
 </head>
 <body>
-    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <div class="card p-4" style="max-width: 400px; width: 100%;">
-            <h2 class="text-center mb-4">Registrar</h2>
-            <form method="post">
-                <div class="form-group">
-                    <input type="text" name="username" class="form-control" placeholder="Nome de usuário" required>
+    <div class="container">
+        <div class="item1">
+            <div class="imagem_onda">
+                <img src="img/wave.svg" alt="Imagem de onda">
+                <div>
+                    <img src="img/personagens.svg" alt="Imagem de personagens ilustrativos">
                 </div>
-                <div class="form-group">
-                    <input type="email" name="email" class="form-control" placeholder="Email" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" name="senha" class="form-control" placeholder="Senha" required>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Registrar</button>
-            </form>
-            <p class="text-center mt-3">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
+            </div>
+        </div>
+        <div class="item2">
+        <h1>Crie sua conta</h1>
+        <p>Preencha seus dados</p>
+        <form action="#">
+            <div class="container">
+            <label><img src="img/Vector.svg" alt="Ícone de usuário"><input type="text" name="nome" placeholder="Nome"></label>
+            </div>
+            <br>
+            <div class="container">
+            <label><img src="img/Vector (1).svg" alt="Ícone de email"><input type="text" name="email" placeholder="Email"></label>
+            </div>
+            <br>
+            <div class="container">
+            <label><img src="img/Vector (2).svg" alt="Ícone de cadeado"><input type="password" name="senha" placeholder="Senha"></label>
+            </div>
+            <br>
+            <a href="#">
+            <input class="submit" type="submit" value="Cadastrar">
+            </a>
+        </form>
+        <p class="text-center mt-3">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
