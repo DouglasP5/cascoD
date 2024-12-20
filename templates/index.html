@@ -7,104 +7,37 @@
     <title>🐢 Casco - Conservação de Tartarugas Marinhas 🐢</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #28a745;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 1.1em;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .btn-custom {
-            background-color: #28a745;
-            color: #fff;
-            padding: 15px 25px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-
-        .btn-custom:hover {
-            background-color: #218838;
-        }
-
-        .btn-secondary-custom {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px 25px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            width: 100%;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn-secondary-custom:hover {
-            background-color: #0069d9;
-        }
-
-        footer {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        footer a {
-            color: #28a745;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="../static/home.css">
+    <link rel="shortcut icon" type="image/png" href="img/favicon-32x32.png"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Satisfy&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Satisfy&display=swap" rel="stylesheet">
+    <title>CASCO</title>
 </head>
 <body>
+    <header>
+        
+        <figure class="logo">
+            <img src="img/Logo Casco.svg" alt="Logo Casco">
+        </figure>
+    </header>
 
-    <div class="container">
-        <h1>🐢Casco🐢</h1>
-        <p>Bem-vindo à plataforma de conservação de tartarugas marinhas! Faça login ou crie uma conta para começar a colaborar com a preservação.</p>
+    <nav>
+        <a href="login.html" class="login">Login</a>
+        <a href="signup.html" class="signup">Sign Up</a>
+    </nav>
 
-        <!-- Botões para Login e Register -->
-        <a href="{{ url_for('login') }}">
-            <button class="btn-custom">Login</button>
-        </a>
-
-        <a href="{{ url_for('register') }}">
-            <button class="btn-secondary-custom">Criar Conta</button>
-        </a>
-
-        <footer>
-            <p>&copy; 2024 | <a href="https://www.receitadenatal.com.br">Associação de Proteção e Conservação Ambiental Cabo de São Roque</a></p>
-        </footer>
-    </div>
-
+    <main>
+        <p>CONSERVAÇÃO DE TARTARUGAS MARINHAS</p>
+        <h1>CASCO</h1>
+        <a href="">Entre em contato</a>
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
