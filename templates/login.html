@@ -1,28 +1,29 @@
-<div class="principal">
-        <main>
-            <h1>Faça seu login</h1>
-            <p class="comp">Preencha seus dados</p>
-
-            <form action="#">
-                <div class="container">
-                    <label><img src="img/email-icon.png" alt="Email - Ícone"><input type="text" name="email" placeholder="Email"></label>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="card p-4" style="max-width: 400px; width: 100%;">
+            <h2 class="text-center mb-4">Login</h2>
+            <form method="post">
+                <div class="form-group">
+                    <input type="email" name="email" class="form-control" placeholder="Email" required>
                 </div>
-                <div class="container password">
-                    <label><img src="img/password-icon.png" alt="Senha - Ícone" class="senha"><input type="password" name="senha" placeholder="Senha"></label>
+                <div class="form-group">
+                    <input type="password" name="senha" class="form-control" placeholder="Senha" required>
                 </div>
-                <a href="#">
-                    <input  class="submit" type="submit" value="Entrar">
-                </a>
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
             </form>
             <p class="text-center mt-3">Não tem uma conta? <a href="{{ url_for('register') }}">Registrar-se</a></p>
             <div class="alert alert-danger d-none" id="errorAlert">
                 <strong>Erro!</strong> Email ou senha inválidos.
             </div>
-        </main>
-        
-        <section>
-            <img src="img/nadador.png" alt="Nadador">
-        </section>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
@@ -36,3 +37,5 @@
             }
         });
     </script>
+</body>
+</html>
