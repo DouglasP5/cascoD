@@ -69,8 +69,3 @@ Se você tiver dúvidas ou sugestões sobre o projeto, entre em contato com o ti
 Este projeto é de código aberto e qualquer contribuição é bem-vinda! Se você deseja ajudar, basta fazer um fork do repositório, criar uma nova branch, e enviar um pull request.
 
 Juntos, podemos ajudar na preservação das tartarugas marinhas!
-
-lua
-Copiar código
-
-Este README traz uma explicação completa do seu projeto de maneira organizada, colorida e com
