@@ -41,17 +41,16 @@ a.login{
     order: 1;
     margin-right: 28px;
     color: #FFFFFF;
+    position: static;
+    padding: 5px;
 }
 a.signup{
     color: #000000;
     background-color: #FFFFFF;
-    border: solid 1px #FFFFFF;
+    border: solid 5px #FFFFFF;
     border-radius: 73px;
     width: 100px;
-    height: 30px;
-    padding-top: 10px;
-    position: relative;
-    top: -12px;
+    position: static;
 }
 
 
