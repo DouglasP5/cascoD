@@ -59,7 +59,7 @@ form .password label {
 
 form .container label input {
     width: 580px;
-    height: 76px;
+    height: 46px;
     background-color: #F0F0F0;
     border: none;
     padding: 1vw;
@@ -70,7 +70,7 @@ form .container label input {
 }
 
 form .container label img{
-    width: 24px;
+    width: 32px;
     height: 22px;
 }
 
