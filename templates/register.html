@@ -19,7 +19,7 @@
         <div class="item2">
         <h1>Crie sua conta</h1>
         <p>Preencha seus dados</p>
-        <form action="#">
+        <form action="../templates/pagina_inicial.html">
             <div class="container">
             <label><img src="../static/imagens/signup/Vector.svg" alt="Ícone de usuário"><input type="text" name="nome" placeholder="Nome"></label>
             </div>
@@ -36,7 +36,7 @@
             <input class="submit" type="submit" value="Cadastrar">
             </a>
         </form>
-        <p class="text-center mt-3">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
+        <p class="text-center mt-3">Já tem uma conta? <a href="../templates/login.html">Entrar</a></p>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
