@@ -35,7 +35,7 @@ Execute o servidor:
 bash
 Copiar código
 python app.py
-Agora, acesse o http://localhost:5000 para ver o projeto em ação!
+Agora, acesse o https://casco.vercel.app/ para ver o projeto em ação!
 
 🌟 Funcionalidades
 Gestão de Usuários
@@ -63,7 +63,7 @@ A interface foi desenvolvida de maneira simples e intuitiva, com templates HTML 
 Este projeto está licenciado sob a MIT License - veja o arquivo LICENSE para mais detalhes.
 
 📞 Contato
-Se você tiver dúvidas ou sugestões sobre o projeto, entre em contato com o time de desenvolvimento ou envie um e-mail para contato@casco.
+Se você tiver dúvidas ou sugestões sobre o projeto, entre em contato com o time de desenvolvimento ou envie um e-mail para douglas.pierry@escolar.ifrn.edu.br.
 
 🌍 Contribua!
 Este projeto é de código aberto e qualquer contribuição é bem-vinda! Se você deseja ajudar, basta fazer um fork do repositório, criar uma nova branch, e enviar um pull request.

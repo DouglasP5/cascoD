@@ -1,10 +1,11 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    background-image: url(imagens/home/turtle-figure.png), url(imagens/home/star1-figure.png), url(imagens/home/star2-figure.png), url(imagens/home/fish1-figure.png), url(imagens/home/fish2-figure.png);
+    background-image: url(imagens/turtle-figure.png), url(imagens/star1-figure.png), url(imagens/star2-figure.png), url(imagens/fish1-figure.png), url(imagens/fish2-figure.png);
     background-position: bottom 160px left 250px, top 420px left 280px, top 530px left 380px, top 360px right 280px, top 280px right 190px;
     background-repeat: no-repeat;
     
@@ -37,20 +38,40 @@ a {
     text-decoration: none;    
 }
 
-a.login{
+a.contato{
     order: 1;
-    margin-right: 28px;
-    color: #FFFFFF;
-    position: static;
-    padding: 5px;
+    margin-right: -30px;
+    background-color: #FFFFFF;
+    color: rgb(0, 99, 190);
+    position: absolute;
+    width: 22vh;
+    top: -2.5vh;
+    padding: 8px;
+    border-radius: 20px;
 }
-a.signup{
-    color: #000000;
+
+div.botoes {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+
+a.register, a.login{
     background-color: #FFFFFF;
     border: solid 5px #FFFFFF;
-    border-radius: 73px;
-    width: 100px;
+    border-radius: 10px;
     position: static;
+    width: 30vh;
+    text-align: center;
+    margin: 2vh;
+}
+
+a.login {
+    color: rgb(0, 99, 190);
+}
+
+a.register {
+    color: #000000;
 }
 
 
