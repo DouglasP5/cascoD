@@ -27,7 +27,7 @@
                     <input class="submit_b" type="submit" value="Entrar">
                 </a>
             </form>
-            <p class="text-center mt-3">Não tem uma conta? <a href="../templates/register.html">Registrar-se</a></p>
+            <p class="text-center mt-3">Não tem uma conta? <a href="{{ url_for('register') }}">Registrar-se</a></p>
             <div class="alert alert-danger d-none" id="errorAlert">
                 <strong>Erro!</strong> Email ou senha inválidos.
             </div>
