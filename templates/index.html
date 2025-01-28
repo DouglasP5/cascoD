@@ -23,7 +23,7 @@
 <body>
     <header>        
         <figure class="logo">
-            <img src="..static/imagens/home/Logo-Casco.svg" alt="Logo Casco">
+            <img src="../static/imagens/home/Logo-Casco.svg" alt="Logo Casco">
         </figure>
     </header>
 
@@ -35,8 +35,8 @@
         <p>CONSERVAÇÃO DE TARTARUGAS MARINHAS</p>
         <h1>CASCO</h1>
         <div class="botoes">
-            <a href="./login.html" class="login">Login</a>
-            <a href="./register.html" class="register">Sign Up</a>
+            <a href="{{ url_for('login') }}" class="login">Login</a>
+            <a href="{{ url_for('register') }}" class="register">Sign Up</a>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
