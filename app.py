@@ -62,7 +62,7 @@ def pagina_inicial():
         email = request.form.get('email')
         senha = request.form.get('senha')
         return f"Bem-vindo, {nome}!"
-    return render_template('pagina_inicial.html')
+    return render_template('index.html')
 
 with app.app_context():
     db.create_all()
