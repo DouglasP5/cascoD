@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,22 +19,29 @@
         <div class="item2">
         <h1>Crie sua conta</h1>
         <p>Preencha seus dados</p>
-        <form action="{{ url_for('pagina_inicial') }}">
+        <form action="{{ url_for('pagina_inicial') }}" method="POST">
             <div class="container">
-            <label><img src="../static/imagens/signup/Vector.svg" alt="Ícone de usuário"><input type="text" name="nome" placeholder="Nome"></label>
+                <label>
+                    <img src="../static/imagens/signup/Vector.svg" alt="Ícone de usuário">
+                    <input type="text" name="nome" placeholder="Nome" required>
+                </label>
             </div>
             <br>
             <div class="container">
-            <label><img src="../static/imagens/signup/Vector1.svg" alt="Ícone de email"><input type="text" name="email" placeholder="Email"></label>
+                <label>
+                    <img src="../static/imagens/signup/Vector1.svg" alt="Ícone de email">
+                    <input type="email" name="email" placeholder="Email" required>
+                </label>
             </div>
             <br>
             <div class="container">
-            <label><img src="../static/imagens/signup/Vector2.svg" alt="Ícone de cadeado"><input type="password" name="senha" placeholder="Senha"></label>
+                <label>
+                    <img src="../static/imagens/signup/Vector2.svg" alt="Ícone de cadeado">
+                    <input type="password" name="senha" placeholder="Senha" required>
+                </label>
             </div>
             <br>
-            <a href="{{ url_for('pagina_inicial') }}">
             <input class="submit" type="submit" value="Cadastrar">
-            </a>
         </form>
         <p class="text-center mt-3">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
         </div>

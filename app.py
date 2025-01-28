@@ -55,9 +55,14 @@ class RegistroTartaruga(db.Model):
     quantidade_ovos = db.Column(db.Integer, nullable=False)
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/', methods=['GET', 'POST'])
+def pagina_inicial():
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        email = request.form.get('email')
+        senha = request.form.get('senha')
+        return f"Bem-vindo, {nome}!"
+    return render_template('pagina_inicial.html')
 
 with app.app_context():
     db.create_all()
