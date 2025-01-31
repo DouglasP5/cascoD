@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    font-family: "Poppins";
+}
+.container{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+.container .item1{
+    background-color: #0063BE;
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+.container .item1 nav .imagem-logo{
+    display: block;
+    padding: auto;
+    margin: auto;
+    margin-top: 1vh;
+    margin-bottom: 5vh;
+}
+.container .item1 nav .imagem-foto{
+    display: block;
+    padding: auto;
+    margin: auto;
+}
+.container .item1 nav p{
+    margin-top: 10px;
+    margin-bottom: 50px;
+    color: white;
+    text-align: center;
+    font-size: small;
+}
+.container .item1 nav a{
+    text-decoration: none;
+    color: white;
+    display: block;
+    margin-bottom: 3vh;
+    font-size: small;
+    padding: 5px;
+    padding-left: 30px;
+    margin-left: 10%;
+}
+.container .item1 nav .sair{
+    margin-top: 5vh;
+}
+.container .item1 nav a img{
+    display: inline;
+    width: 8%;
+    margin-right: 20px;
+}
+.container .item1 nav .inicio{
+    background-color: white;
+    color: #0063BE;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.container .item2{
+    text-align: center;
+    width: 80vw;
+}
+.container .item2 header h1{
+    font-weight: 600;
+    margin: 50px;
+    margin-left: 5vw;
+    text-align: left;
+    text-wrap: nowrap;
+    padding: 3px;
+    padding-left: 5px;
+    font-size: 25px;
+    color: #4D4D4D;
+}
+.container .item2 main{
+    position: relative;
+    top: 0px;
+    left: 0px;
+}
+.container .item2 main h1{
+    font-weight: 400;
+    margin-bottom: 2px;
+    text-wrap: nowrap;
+    display: inline;
+}
+.container .item2 main .text2{
+    font-weight: 600;
+}
+.container .item2 main div{
+    margin-top: 100px;
+}
+.container .item2 main div p{
+    text-align: left;
+    text-wrap: nowrap;
+    margin-left: 5vw;
+}
+.container .item2 main .imagens{
+    position: absolute;
+    top: 0%;
+    right: 25vw;
+}
+.container .item2 main .imagens .imagem-tartaruga1{
+    position: absolute;
+    left: 500px;
+    top: 150px;
+}
+.container .item2 main .imagens .imagem-tartaruga2{
+    position: absolute;
+    left: 340px;
+    bottom: 30px;
+}
+.container .item2 main .imagens .imagem-circulo1{
+    position: relative;
+    left: 280px;
+    top: 80px;
+    width: 45%;
+}
+.container .item2 main .imagens .imagem-circulo2{
+    position: relative;
+    left: 220px;
+    top: 40px;
+    width: 45%;
+}
