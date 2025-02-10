@@ -66,18 +66,18 @@ body{
     margin-right: 20px;
 }
 
-.container .item1 nav a img.turtle_icon{
-    position: relative;
-    top: 0.4vh;
-    width: 10%;
-}
 
-.container .item1 nav .cadastrar{
+.container .item1 nav a.cadastrar{
     background-color: white;
     height: 5vh;
     color: #0063BE;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+}
+
+img.cadastrar {
+    position: relative;
+    top: 0.6vh;
 }
 
 /*header*/
