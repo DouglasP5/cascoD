@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    font-family: "Poppins";
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.container .item1{
+    background-color: #0063BE;
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.container .item1 nav .imagem-logo{
+    display: block;
+    padding: auto;
+    margin: auto;
+    margin-top: 2vh;
+    margin-bottom: 5vh;
+}
+
+.container .item1 nav .imagem-foto{
+    display: block;
+    padding: auto;
+    margin: auto;
+}
+
+.container .item1 nav p{
+    margin-top: 10px;
+    margin-bottom: 50px;
+    color: white;
+    text-align: center;
+    font-size: small;
+}
+
+.container .item1 nav a{
+    text-decoration: none;
+    color: white;
+    display: block;
+    margin-bottom: 3vh;
+    font-size: small;
+    padding: 4px;
+    padding-left: 30px;
+    margin-left: 10%;
+}
+
+.container .item1 nav .sair{
+    margin-top: 5vh;
+}
+
+.container .item1 nav a img{
+    display: inline;
+    width: 8%;
+    margin-right: 20px;
+}
+
+.container .item1 nav a img.turtle_icon{
+    position: relative;
+    top: 0.4vh;
+    width: 10%;
+}
+
+.container .item1 nav .turtle{
+    background-color: white;
+    height: 5vh;
+    color: #0063BE;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+header h1{
+    font-size: 21px;
+    font-weight: 600;
+    text-align: center;
+    padding-top: 9vh;
+    color: #0063BE;
+}
+
+main{
+    width: 150vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10vh;
+
+}
+
+div.tartaruga{
+    width: 42.5%;
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    border: solid white ;
+    border-radius: 8px;
+    box-shadow: 1px 4px 14px 6px rgba(0, 0, 0, 0.1);
+    padding-bottom: 3vh;
+
+}
+
+div.separa{
+    margin-bottom: 8vh;
+    margin-top: -4vh;
+}
+
+div.tartaruga h2{
+    margin-left: 4vh;
+    color: rgba(37, 81, 122, 1);
+    border-bottom: solid rgba(0, 0, 0, 0.1) 2px;
+    padding-bottom: 1.5vh;
+    width: 34vh;
+    font-size: 18px;
+}
+
+div.tartaruga p, a.mais_i{
+    margin-left: 5vh;
+    font-size: 12px;
+    line-height: 24px;
+}
+
+a.mais_i{
+    color: rgba(5, 93, 174, 1);
+}
+
+div.tartaruga p.first{
+    margin-top: 2vh;
+}
+
+div.tartaruga img.turtle{
+    width: 20%;
+    display: flex;
+    margin-left: 45vh;
+    margin-top: -16vh;
+}
+
+a.continuar{
+    margin-left: 120vh;
+    padding-top: 4.3vh;
+}
+
+a.editar{
+    width: 3vh;
+    height: 1vh;
+    margin-left: 58vh;
+    margin-top: 2vh;
+}
