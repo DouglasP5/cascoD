@@ -87,15 +87,22 @@ def register():
         email = request.form['email']
         senha = request.form['senha']
         usuario_existente = Usuario.query.filter_by(email=email).first()
+        
         if usuario_existente:
             flash('Email já registrado! Tente outro.', 'danger')
             return redirect(url_for('register'))
+        
         hashed_senha = generate_password_hash(senha, method='sha256')
         novo_usuario = Usuario(username=username, email=email, senha=hashed_senha, tipo='participante', admin=False)
+        
         db.session.add(novo_usuario)
         db.session.commit()
-        flash('Registrado com sucesso! Faça login.', 'success')
-        return redirect(url_for('pagina_inicial'))
+
+        session['user_id'] = novo_usuario.id
+        
+        flash('Registrado com sucesso! Bem-vindo!', 'success')
+        return redirect(url_for('pagina_inicial'))  
+    
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
