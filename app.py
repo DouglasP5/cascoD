@@ -56,7 +56,7 @@ class RegistroTartaruga(db.Model):
 
 
 @app.route('/', methods=['GET', 'POST'])
-def pagina_inicial():
+def dashboard():
     if request.method == 'POST':
         nome = request.form.get('nome')
         email = request.form.get('email')
