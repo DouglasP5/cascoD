@@ -13,12 +13,12 @@
                 <img src="../static/imagens/pagina_inicial/logo-casco.svg" alt="" class="imagem-logo">
                 <img src="../static/imagens/pagina_inicial/foto.svg" alt="" class="imagem-foto">
                 <p>Luiz</p>
-                <a href="../templates/pagina_inicial.html" class="inicio"><img src="../static/imagens/pagina_inicial/Vector (3).svg" alt="Ícone de casa">Início</a>
+                <a href="{{ url_for('pagina_inicial') }}" class="inicio"><img src="../static/imagens/pagina_inicial/Vector (3).svg" alt="Ícone de casa">Início</a>
                 <a href="#"><img src="../static/imagens/pagina_inicial/turtle (1) 13 1.svg" alt="Ícone de tartarugas">Registros</a>
                 <a href="#"><img src="../static/imagens/pagina_inicial/Vector (4).svg" alt="Íconde de mãos dadas">Equipes</a>
                 <a href="#"><img src="../static/imagens/pagina_inicial/Vector (5).svg" alt="Ícone de mão apontando">Cadastrar</a>
-                <a href="../templates/perfil_usuario.html"><img src="../static/imagens/pagina_inicial/Vector (6).svg" alt="Ícone de usuário">Perfil</a>
-                <a href="../templates/index.html"><img src="../static/imagens/pagina_inicial/file-icon 1.svg" alt="Ícone de sair" class="sair">Sair</a>
+                <a href="{{ url_for('perfil_usuario') }}"><img src="../static/imagens/pagina_inicial/Vector (6).svg" alt="Ícone de usuário">Perfil</a>
+                <a href="{{ url_for('index') }}"><img src="../static/imagens/pagina_inicial/file-icon 1.svg" alt="Ícone de sair" class="sair">Sair</a>
         </nav>
     </div>
     <div class="item2">
