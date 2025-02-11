@@ -5,7 +5,7 @@
 }
 
 body {
-    background-image: url(imagens/turtle-figure.png), url(imagens/star1-figure.png), url(imagens/star2-figure.png), url(imagens/fish1-figure.png), url(imagens/fish2-figure.png);
+    background-image: url(../static/imagens/home/turtle-figure.png), url(../static/imagens/home/star1-figure.png), url(../static/imagens/home/star2-figure.png), url(../static/imagens/home/fish1-figure.png), url(../static/imagens/home/fish2-figure.png);
     background-position: bottom 160px left 250px, top 420px left 280px, top 530px left 380px, top 360px right 280px, top 280px right 190px;
     background-repeat: no-repeat;
     

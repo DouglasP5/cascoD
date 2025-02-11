@@ -47,8 +47,13 @@ body{
     padding-left: 30px;
     margin-left: 10%;
 }
+.container .item1 nav a:hover{
+    background-color: #3a97ee;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
 .container .item1 nav .sair{
-    margin-top: 5vh;
+    margin-top: 5%;
 }
 .container .item1 nav a img{
     display: inline;
@@ -60,6 +65,9 @@ body{
     color: #0063BE;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+}
+.container .item1 nav .inicio:hover{
+    background-color: white;
 }
 .container .item2{
     text-align: center;

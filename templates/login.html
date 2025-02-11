@@ -11,30 +11,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="principal">
+    <div class="container1">
         <main>
             <h1>Faça seu login</h1>
             <p class="comp">Preencha seus dados</p>
 
             <form action="#">
                 <div class="container">
-                    <label><img src="./static/imagens/login/email-icon.png" alt="Email - Ícone"><input type="text" name="email" placeholder="Email"></label>
+                    <label><img src="../static/imagens/login/email-icon.png" alt="Email - Ícone"><input type="text" name="email" placeholder="Email"></label>
                 </div>
                 <div class="container password">
-                    <label><img src="./static/imagens/login/password-icon.png" alt="Senha - Ícone" class="senha"><input type="password" name="senha" placeholder="Senha"></label>
+                    <label><img src="../static/imagens/login/password-icon.png" alt="Senha - Ícone" class="senha"><input type="password" name="senha" placeholder="Senha"></label>
                 </div>
-                <a href="{{ url_for('pagina_inicial') }}" class="submit">
+                <a href="../templates/pagina_inicial.html" class="submit">
                     <input class="submit_b" type="submit" value="Entrar">
                 </a>
             </form>
-            <p class="text-center mt-3">Não tem uma conta? <a href="{{ url_for('register') }}">Registrar-se</a></p>
+            <p class="text-center-mt-3">Não tem uma conta? <a href="../templates/register.html">Registrar-se</a></p>
             <div class="alert alert-danger d-none" id="errorAlert">
                 <strong>Erro!</strong> Email ou senha inválidos.
             </div>
         </main>
-        <section>
-            <img src="./static/imagens/login/nadador.png" alt="Nadador">
-        </section>
+        <div class="item1">
+            <div class="imagem_onda">
+                <img src="../static/imagens/login/wave (1) 3 (1).svg" alt="Imagem de onda">
+                <div>
+                    <img src="../static/imagens/login/nadador.png" alt="Imagem de personagens ilustrativos">
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>

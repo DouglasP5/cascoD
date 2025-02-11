@@ -65,6 +65,7 @@ body{
     padding-right: 50%;
     color: #A5A5A5;
     font-weight: 100;
+    outline: none;
 }
 .item2 form a .submit{
     background-color: #88C6FF;
@@ -75,6 +76,13 @@ body{
     padding-right: 100px;
     padding-left: 100px;
     cursor: pointer;
+}
+.item2 .text-center-mt-3{
+    color: black;
+}
+.item2 .text-center-mt-3 a{
+    text-decoration: none;
+    color: #0063BE;
 }
 @media(max-width: 480px){
     .container{

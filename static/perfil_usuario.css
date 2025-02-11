@@ -47,8 +47,13 @@ body{
     padding-left: 30px;
     margin-left: 10%;
 }
+.container .item1 nav a:hover{
+    background-color: #3a97ee;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
 .container .item1 nav .sair{
-    margin-top: 5vh;
+    margin-top: 5%;
 }
 .container .item1 nav a img{
     display: inline;
@@ -60,6 +65,9 @@ body{
     color: #0063BE;
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+}
+.container .item1 nav .usuario:hover{
+    background-color: white;
 }
 .container .item2{
     text-align: center;
@@ -110,6 +118,7 @@ body{
     margin-left: 2vw;
     margin-right: 2vw;
     margin-bottom: 2vw;
+    outline: none;
 }
 .container .item2 .quadro form a input{
     background-color: #D9D9D9;
