@@ -95,7 +95,7 @@ def register():
         db.session.add(novo_usuario)
         db.session.commit()
         flash('Registrado com sucesso! Faça login.', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('pagina_inicial'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -107,13 +107,13 @@ def login():
         if usuario and check_password_hash(usuario.senha, senha):
             session['user_id'] = usuario.id
             flash('Login bem-sucedido!', 'success')
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('pagina_inicial'))
         else:
             flash('Email ou senha incorretos.', 'danger')
     return render_template('login.html')
 
-@app.route('/dashboard')
-def dashboard():
+@app.route('/pagina_inicial')
+def pagina_inicial():
     if 'user_id' not in session:
         flash('Você precisa fazer login primeiro!', 'warning')
         return redirect(url_for('login'))
@@ -129,7 +129,7 @@ def dashboard():
 
     equipes_lideradas = Equipe.query.filter_by(lider_id=usuario.id).all()
     
-    return render_template('dashboard.html', usuario=usuario, 
+    return render_template('pagina_inicial.html', usuario=usuario, 
                            equipes_participantes=equipes_participantes,
                            equipes_lideradas=equipes_lideradas)
 
@@ -139,7 +139,7 @@ def logout():
     flash('Deslogado com sucesso!', 'success')
     return redirect(url_for('login'))
 
-@app.route('/me')
+@app.route('/perfil_usuario')
 def me():
     if 'user_id' not in session:
         flash('Você precisa estar logado para ver seus dados!', 'warning')
@@ -148,9 +148,9 @@ def me():
     if not usuario:
         flash('Usuário não encontrado!', 'danger')
         return redirect(url_for('login'))
-    return render_template('me.html', usuario=usuario)
+    return render_template('perfil_usuario.html', usuario=usuario)
 
-@app.route('/api/me', methods=['GET'])
+@app.route('/api/perfil_usuario', methods=['GET'])
 def api_me():
     if 'user_id' not in session:
         return jsonify({"error": "Você precisa estar logado para ver seus dados!"}), 403
@@ -199,7 +199,7 @@ def deletar_usuario(id):
     flash(f'Usuário {usuario.username} foi deletado com sucesso!', 'success')
     return redirect(url_for('users'))
 
-@app.route('/criar_equipe', methods=['GET', 'POST'])
+@app.route('/equipes', methods=['GET', 'POST'])
 def criar_equipe():
     if 'user_id' not in session:
         flash('Você precisa fazer login primeiro!', 'warning')
@@ -209,14 +209,14 @@ def criar_equipe():
     
     if not usuario.admin:
         flash('Apenas líderes podem criar equipes!', 'danger')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('pagina_inicial'))
     
     if request.method == 'POST':
         nome = request.form['nome']
         equipe_existente = Equipe.query.filter_by(nome=nome).first()
         if equipe_existente:
             flash('Já existe uma equipe com esse nome!', 'danger')
-            return redirect(url_for('criar_equipe'))
+            return redirect(url_for('equipes'))
         
         nova_equipe = Equipe(nome=nome, lider_id=usuario.id)
         db.session.add(nova_equipe)
@@ -229,7 +229,7 @@ def criar_equipe():
         flash(f'Equipe "{nome}" criada com sucesso!', 'success')
         return redirect(url_for('equipes'))
     
-    return render_template('criar_equipe.html')
+    return render_template('equipes.html')
 
 @app.route('/equipes', methods=['GET', 'POST'])
 def equipes():
@@ -239,7 +239,7 @@ def equipes():
     usuario = Usuario.query.get(session['user_id'])
     if not usuario.admin:
         flash('Apenas líderes podem acessar essa página!', 'danger')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('pagina_inicial'))
     if request.method == 'POST':
         nome = request.form['nome']
         equipe_existente = Equipe.query.filter_by(nome=nome).first()
@@ -373,7 +373,7 @@ def detalhes_tartaruga(tartaruga_id):
         db.session.commit()
         
         flash('Registro concluído com sucesso!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('pagina_inicial'))
     
     return render_template('detalhes_tartaruga.html', tartaruga=tartaruga)
 
