@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    font-family: "Poppins";
+}
+.container{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+.container .item1{
+    background-color: #0063BE;
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+.container .item1 nav .imagem-logo{
+    display: block;
+    padding: auto;
+    margin: auto;
+    margin-top: 1vh;
+    margin-bottom: 5vh;
+}
+.container .item1 nav .imagem-foto{
+    display: block;
+    padding: auto;
+    margin: auto;
+}
+.container .item1 nav p{
+    margin-top: 10px;
+    margin-bottom: 50px;
+    color: white;
+    text-align: center;
+    font-size: small;
+}
+.container .item1 nav a{
+    text-decoration: none;
+    color: white;
+    display: block;
+    margin-bottom: 3vh;
+    font-size: small;
+    padding: 5px;
+    padding-left: 30px;
+    margin-left: 10%;
+}
+.container .item1 nav .sair{
+    margin-top: 5vh;
+}
+.container .item1 nav a img{
+    display: inline;
+    width: 8%;
+    margin-right: 20px;
+}
+.container .item1 nav .cadastro{
+    background-color: white;
+    color: #0063BE;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.item2{
+    text-align: center;
+    width: 80vw;
+    margin-top: 10vh;
+}
+.container .item2 p{
+    margin-bottom: 5vh;
+    font-size: small;
+}
+.container .item2 button{
+    background-color: #0063BE;
+    padding: 3px;
+    border: none;
+    border-radius: 100px;
+    margin-bottom: 5vh;
+}
+.container .item2 .botao1{
+    background-color: #D9D9D9;
+}
+.container .item2 .botao2{
+    background-color: #1E80DB;
+}
+.container .item2 form .form{
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.container .item2 form div{
+    display: inline;
+}
+.container .item2 form .form .coluna1{
+    margin-right: 2vw;
+}
+.container .item2 form .form .coluna2{
+    margin-left: 2vw;
+}
+.container .item2 form label{
+    display: block;
+    font-size: small;
+    color: #666666;
+    margin-bottom: 2vh;
+    font-weight: 500;
+}
+.container .item2 form input{
+    height: 5vh;
+    width: 12vw;
+    margin-bottom: 1vw;
+    border-radius: 5px;
+    border: solid 1px #A1AEB7;
+}
+.container .item2 form select{
+    height: 5vh;
+    width: 12vw;
+    margin-bottom: 1vw;
+    border-radius: 5px;
+    border: solid 1px #A1AEB7;
+}
+.container .item2 form .submit{
+    width: 16vw;
+    background-image: linear-gradient( to right, #97C4EE 25%, #1E80DB 83%);
+    color: white;
+    border: none;
+    height: 7vh;
+    border-radius: 6px;
+    margin-top: 5vh;
+    cursor: pointer;
+}
