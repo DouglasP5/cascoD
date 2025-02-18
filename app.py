@@ -236,29 +236,9 @@ def criar_equipe():
         flash(f'Equipe "{nome}" criada com sucesso!', 'success')
         return redirect(url_for('equipes'))
     
-    return render_template('equipes.html')
-
-@app.route('/equipes', methods=['GET', 'POST'])
-def equipes():
-    if 'user_id' not in session:
-        flash('Você precisa fazer login primeiro!', 'warning')
-        return redirect(url_for('login'))
-    usuario = Usuario.query.get(session['user_id'])
-    if not usuario.admin:
-        flash('Apenas líderes podem acessar essa página!', 'danger')
-        return redirect(url_for('pagina_inicial'))
-    if request.method == 'POST':
-        nome = request.form['nome']
-        equipe_existente = Equipe.query.filter_by(nome=nome).first()
-        if equipe_existente:
-            flash('Já existe uma equipe com esse nome!', 'danger')
-        else:
-            nova_equipe = Equipe(nome=nome, lider_id=usuario.id)
-            db.session.add(nova_equipe)
-            db.session.commit()
-            flash(f'Equipe "{nome}" criada com sucesso!', 'success')
     equipes = Equipe.query.filter_by(lider_id=usuario.id).all()
     return render_template('equipes.html', equipes=equipes)
+
 
 @app.route('/ver_equipe/<int:equipe_id>')
 def ver_equipe(equipe_id):
