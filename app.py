@@ -61,12 +61,11 @@ def dashboard():
         nome = request.form.get('nome')
         email = request.form.get('email')
         senha = request.form.get('senha')
-        return f"Bem-vindo, {nome}!"
+        
+        return redirect(url_for('pagina_inicial'))
+    
     return render_template('index.html')
-
-with app.app_context():
-    db.create_all()
-
+    
 @app.before_first_request
 def criar_usuario_admin():
     usuario_admin = Usuario.query.filter_by(admin=True).first()
@@ -101,9 +100,10 @@ def register():
         session['user_id'] = novo_usuario.id
         
         flash('Registrado com sucesso! Bem-vindo!', 'success')
-        return redirect(url_for('pagina_inicial'))  
+        return redirect(url_for('pagina_inicial'))
     
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -114,10 +114,11 @@ def login():
         if usuario and check_password_hash(usuario.senha, senha):
             session['user_id'] = usuario.id
             flash('Login bem-sucedido!', 'success')
-            return redirect(url_for('pagina_inicial'))
+            return redirect(url_for('pagina_inicial')) 
         else:
             flash('Email ou senha incorretos.', 'danger')
     return render_template('login.html')
+
 
 @app.route('/pagina_inicial')
 def pagina_inicial():
