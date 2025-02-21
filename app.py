@@ -84,7 +84,12 @@ class Tartaruga(db.Model):
     anilha = db.Column(db.String(100), unique=True, nullable=False)
     especie = db.Column(db.String(150), nullable=False)
     tipo_registro = db.Column(db.String(50), nullable=False)
+    equipe_id = db.Column(db.Integer, db.ForeignKey('equipe.id'), nullable=False)
+    registrado_por = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    data_registro = db.Column(db.DateTime, default=datetime.utcnow)
     registros = db.relationship('RegistroTartaruga', backref='tartaruga', lazy=True)
+    equipe = db.relationship('Equipe', backref='tartarugas')
+    registrador = db.relationship('Usuario', backref='tartarugas_registradas')
 
 class RegistroTartaruga(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -101,7 +106,17 @@ class RegistroTartaruga(db.Model):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Obtém estatísticas
+    total_tartarugas = Tartaruga.query.count()
+    total_equipes = Equipe.query.count()
+    total_usuarios = Usuario.query.count()
+    total_registros = RegistroTartaruga.query.count()
+    
+    return render_template('index.html',
+                         total_tartarugas=total_tartarugas,
+                         total_equipes=total_equipes,
+                         total_usuarios=total_usuarios,
+                         total_registros=total_registros)
 
 @app.before_first_request
 def criar_usuario_admin():
@@ -188,19 +203,30 @@ def pagina_inicial():
     
     usuario = Usuario.query.get(session['user_id'])
     if not usuario:
-        session.clear()  # Limpa a sessão se o usuário não for encontrado
+        session.clear()
         flash('Usuário não encontrado!', 'danger')
         return redirect(url_for('login'))
     
+    # Busca equipes que o usuário participa
     equipes_participantes = Equipe.query.join(Convite).filter(
-        (Convite.usuario_id == usuario.id) & (Convite.status == 'aceito')
+        Convite.usuario_id == usuario.id,
+        Convite.status == 'aceito'
     ).all()
 
+    # Busca equipes que o usuário lidera
     equipes_lideradas = Equipe.query.filter_by(lider_id=usuario.id).all()
     
-    return render_template('pagina_inicial.html', usuario=usuario, 
-                           equipes_participantes=equipes_participantes,
-                           equipes_lideradas=equipes_lideradas)
+    # Busca convites pendentes
+    convites_pendentes = Convite.query.filter_by(
+        usuario_id=usuario.id,
+        status='pendente'
+    ).order_by(Convite.data_envio.desc()).all()
+    
+    return render_template('pagina_inicial.html', 
+                         usuario=usuario,
+                         equipes_participantes=equipes_participantes,
+                         equipes_lideradas=equipes_lideradas,
+                         convites_pendentes=convites_pendentes)
 
 @app.route('/logout')
 def logout():
@@ -400,46 +426,99 @@ def convites():
     return render_template('convites.html', convites=convites)
 
 @app.route('/responder_convite/<int:convite_id>/<acao>', methods=['POST'])
+@handle_db_connection
 def responder_convite(convite_id, acao):
+    if 'user_id' not in session:
+        return jsonify({"error": "Não autorizado"}), 401
+
+    try:
+        convite = Convite.query.get_or_404(convite_id)
+        
+        # Verifica se o convite pertence ao usuário
+        if convite.usuario_id != session['user_id']:
+            return jsonify({"error": "Acesso negado"}), 403
+            
+        # Verifica se o convite ainda está pendente
+        if convite.status != 'pendente':
+            return jsonify({"error": "Este convite não está mais pendente"}), 400
+            
+        if acao not in ['aceitar', 'rejeitar']:
+            return jsonify({"error": "Ação inválida"}), 400
+            
+        convite.status = 'aceito' if acao == 'aceitar' else 'rejeitado'
+        
+        db.session.commit()
+        
+        mensagem = 'Convite aceito com sucesso!' if acao == 'aceitar' else 'Convite rejeitado.'
+        return jsonify({"message": mensagem}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Erro ao responder convite: {str(e)}")
+        return jsonify({"error": "Erro ao processar convite"}), 500
+
+@app.route('/equipes/<int:equipe_id>/registrar_tartaruga', methods=['GET', 'POST'])
+@handle_db_connection
+def registrar_tartaruga(equipe_id):
     if 'user_id' not in session:
         flash('Você precisa fazer login primeiro!', 'warning')
         return redirect(url_for('login'))
-    convite = Convite.query.get(convite_id)
-    if not convite or convite.usuario_id != session['user_id']:
-        flash('Convite não encontrado ou acesso negado!', 'danger')
-        return redirect(url_for('convites'))
-    if acao == 'aceitar':
-        convite.status = 'aceito'
-        db.session.commit()
-        flash('Você aceitou o convite para a equipe!', 'success')
-    elif acao == 'rejeitar':
-        convite.status = 'rejeitado'
-        db.session.commit()
-        flash('Você rejeitou o convite para a equipe.', 'info')
-    return redirect(url_for('convites'))
-
-@app.route('/registrar_tartaruga', methods=['GET', 'POST'])
-def registrar_tartaruga():
-    if request.method == 'POST':
-        sexo = request.form['sexo']
-        nome_cientifico = request.form['nome_cientifico']
-        anilha = request.form['anilha']
-        especie = request.form['especie']
-        tipo_registro = request.form['tipo_registro']
         
-        nova_tartaruga = Tartaruga(
-            sexo=sexo,
-            nome_cientifico=nome_cientifico,
-            anilha=anilha,
-            especie=especie,
-            tipo_registro=tipo_registro
-        )
-        db.session.add(nova_tartaruga)
-        db.session.commit()
-        
-        return redirect(url_for('detalhes_tartaruga', tartaruga_id=nova_tartaruga.id))
+    usuario = Usuario.query.get(session['user_id'])
+    equipe = Equipe.query.get_or_404(equipe_id)
     
-    return render_template('registrar_tartaruga.html')
+    # Verifica se o usuário é membro da equipe
+    is_membro = Convite.query.filter_by(
+        equipe_id=equipe_id,
+        usuario_id=usuario.id,
+        status='aceito'
+    ).first() or equipe.lider_id == usuario.id
+    
+    if not is_membro:
+        flash('Você não tem permissão para registrar tartarugas nesta equipe!', 'danger')
+        return redirect(url_for('pagina_inicial'))
+    
+    if request.method == 'POST':
+        try:
+            # Cria a tartaruga
+            nova_tartaruga = Tartaruga(
+                sexo=request.form['sexo'],
+                nome_cientifico=request.form['nome_cientifico'],
+                anilha=request.form['anilha'],
+                especie=request.form['especie'],
+                tipo_registro=request.form['tipo_registro'],
+                equipe_id=equipe_id,
+                registrado_por=usuario.id
+            )
+            
+            db.session.add(nova_tartaruga)
+            db.session.flush()  # Gera o ID da tartaruga
+            
+            # Cria o registro inicial
+            registro = RegistroTartaruga(
+                tartaruga_id=nova_tartaruga.id,
+                estado=request.form['estado'],
+                data=datetime.now().date(),
+                horario=datetime.now().time(),
+                praia=request.form['praia'],
+                municipio=request.form['municipio'],
+                comprimento_casco=float(request.form['comprimento_casco']),
+                largura_casco=float(request.form['largura_casco']),
+                quantidade_ovos=int(request.form['quantidade_ovos'])
+            )
+            
+            db.session.add(registro)
+            db.session.commit()
+            
+            flash('Tartaruga registrada com sucesso!', 'success')
+            return redirect(url_for('detalhes_tartaruga', equipe_id=equipe_id, tartaruga_id=nova_tartaruga.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Erro ao registrar tartaruga: {str(e)}")
+            flash('Erro ao registrar tartaruga. Tente novamente.', 'danger')
+            
+    return render_template('registrar_tartaruga.html', equipe=equipe, usuario=usuario)
 
 @app.route('/detalhes_tartaruga/<int:tartaruga_id>', methods=['GET', 'POST'])
 def detalhes_tartaruga(tartaruga_id):
@@ -744,6 +823,32 @@ def cancelar_convite(equipe_id, convite_id):
     except:
         db.session.rollback()
         return jsonify({"error": "Erro ao cancelar convite"}), 500
+
+@app.route('/api/contributors/stats')
+def get_contributor_stats():
+    """
+    Retorna estatísticas dos contribuidores do sistema
+    """
+    try:
+        # Busca todos os usuários e suas estatísticas
+        stats = db.session.query(
+            Usuario.username,
+            db.func.count(Tartaruga.id).label('registros')
+        ).outerjoin(
+            Tartaruga, 
+            Tartaruga.registrado_por == Usuario.id
+        ).group_by(
+            Usuario.id
+        ).all()
+        
+        return jsonify([{
+            'username': stat.username,
+            'registros': stat.registros
+        } for stat in stats])
+        
+    except Exception as e:
+        app.logger.error(f"Erro ao buscar estatísticas: {str(e)}")
+        return jsonify({"error": "Erro ao buscar estatísticas"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

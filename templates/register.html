@@ -1,53 +1,66 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de cadastro</title>
-    <link rel="stylesheet" href="../static/signup.css">
-</head>
-<body>
-    <div class="container">
-        <div class="item1">
-            <div class="imagem_onda">
-                <img src="../static/imagens/signup/wave.svg" alt="Imagem de onda">
+{% extends "layouts/base_landing.html" %}
+
+{% block title %}Cadastro - Projeto Casco{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-blue-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full bg-white rounded-lg p-8 space-y-6">
+        <div>
+            <img class="mx-auto h-16 w-auto" src="{{ url_for('static', filename='imagens/home/Logo-Casco.svg') }}" alt="Logo">
+            <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
+                Crie sua conta
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Junte-se ao Projeto Casco
+            </p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-lg {% if category == 'success' %}bg-green-100 text-green-700{% elif category == 'danger' %}bg-red-100 text-red-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form class="mt-8 space-y-6" action="{{ url_for('register') }}" method="POST">
+            <div class="space-y-4">
                 <div>
-                    <img src="../static/imagens/signup/personagens.svg" alt="Imagem de personagens ilustrativos">
+                    <label for="username" class="block text-sm font-medium text-gray-700">Nome de Usuário</label>
+                    <input id="username" name="username" type="text" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Seu nome de usuário">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" name="email" type="email" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Seu email">
+                </div>
+                <div>
+                    <label for="senha" class="block text-sm font-medium text-gray-700">Senha</label>
+                    <input id="senha" name="senha" type="password" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Sua senha">
                 </div>
             </div>
-        </div>
-        <div class="item2">
-        <h1>Crie sua conta</h1>
-        <p>Preencha seus dados</p>
-        <form action="{{ url_for('register') }}" method="POST">
-            <div class="container">
-                <label>
-                    <img src="../static/imagens/signup/Vector.svg" alt="Ícone de usuário">
-                    <input type="text" name="username" placeholder="Nome" required>
-                </label>
+
+            <div>
+                <button type="submit" 
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cadastrar
+                </button>
             </div>
-            <br>
-            <div class="container">
-                <label>
-                    <img src="../static/imagens/signup/Vector (1).svg" alt="Ícone de email">
-                    <input type="email" name="email" placeholder="Email" required>
-                </label>
+
+            <div class="text-center">
+                <a href="{{ url_for('login') }}" class="text-sm font-medium text-blue-600 hover:text-blue-500">
+                    Já tem uma conta? Faça login
+                </a>
             </div>
-            <br>
-            <div class="container">
-                <label>
-                    <img src="../static/imagens/signup/Vector (2).svg" alt="Ícone de cadeado">
-                    <input type="password" name="senha" placeholder="Senha" required>
-                </label>
-            </div>
-            <br>
-            <button type="submit" class="submit">Cadastrar</button>
         </form>
-        <p class="text-center-mt-3">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
-        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+</div>
+{% endblock %}

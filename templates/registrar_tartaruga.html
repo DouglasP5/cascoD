@@ -1,69 +1,292 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./static/registrar_tartaruga.css">
-    <title>Registrar Tartaruga</title>
-</head>
-<body>
+{% extends "layouts/base.html" %}
 
-    <div class="container">
-        <div class="item1">
-            <nav>
-                <img src="./static/imagens/pagina_inicial/logo-casco.svg" alt="" class="imagem-logo">
-                <img src="./static/imagens/pagina_inicial/foto.svg" alt="" class="imagem-foto">
-                <p>Luiz</p>
-                <a href="./templates/pagina_inicial.html" class="inicio"><img src="./static/imagens/pagina_inicial/Vector.svg" alt="Ícone de casa">Início</a>
-                <a href="tartarugas_registradas.html" class="turtle"><img src="./static/imagens/pagina_inicial/Casco Turtle.svg" alt="Ícone de tartarugas" class="turtle_icon">Registros</a>
-                <a href="#" class="equipes"><img src="./static/imagens/pagina_inicial/Vector (4).svg" alt="Íconde de mãos dadas">Equipes</a>
-                <a href="#" class="cadastrar"><img src="./static/imagens/pagina_inicial/mão-cadastro.svg" alt="Ícone de mão apontando" class="cadastrar">Cadastrar</a>
-                <a href="#" class="perfil"><img src="./static/imagens/pagina_inicial/Vector (6).svg" alt="Ícone de usuário">Perfil</a>
-                <a href="#"><img src="./static/imagens/pagina_inicial/file-icon 1.svg" alt="Ícone de sair" class="sair">Sair</a>
-        </nav>
+{% block title %}Registrar Tartaruga - {{ equipe.nome }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Novo Registro de Tartaruga</h1>
+                <p class="text-gray-600 mt-2">Equipe: {{ equipe.nome }}</p>
+            </div>
+            <a href="{{ url_for('detalhes_equipe', id=equipe.id) }}" 
+               class="text-blue-600 hover:text-blue-800 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+                </svg>
+                Voltar para Equipe
+            </a>
+        </div>
     </div>
 
-    <main>
-        <h1>Cadastre sua tartaruga</h1>
-        <br>
-        <p>Ralize o cadastro da tartaruga encontrada</p>
-
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="8" viewBox="0 0 28 8" fill="none">
-            <circle cx="4" cy="4" r="4" fill="#1E80DB" fill-opacity="0.8"/>
-            <circle cx="24" cy="4" r="4" fill="#D9D9D9"/>
-        </svg>
-
-        <form method="post">
-        
-        <div class="teste">
-            <label for="especie" class="item">Espécie da tartaruga</label>
-            <input type="text" name="especie" id="especie" required>
-
-            <label for="nome_cientifico" class="item">Nome Científico</label>
-            <input type="text" name="nome_cientifico" id="nome_cientifico" required>
-
-            <label for="sexo" class="sexo">Sexo</label>
-            <div class="teste2">
-                <input type="radio" name="sexo" id="masculino" class="sexo"> <label for="masculino" class="sexo2">Masculino</label>
+    <!-- Barra de Progresso -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="flex justify-between mb-4">
+            <div class="flex items-center">
+                <div id="step1-indicator" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
+                <div class="ml-2">Informações Básicas</div>
             </div>
-            <br>
+            <div class="flex-1 mx-4 mt-4">
+                <div class="h-1 bg-gray-200">
+                    <div id="progress-bar" class="h-1 bg-blue-600 transition-all duration-500" style="width: 25%"></div>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <div id="step2-indicator" class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold">2</div>
+                <div class="ml-2">Data e Hora</div>
+            </div>
+            <div class="flex-1 mx-4 mt-4">
+                <div class="h-1 bg-gray-200"></div>
+            </div>
+            <div class="flex items-center">
+                <div id="step3-indicator" class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold">3</div>
+                <div class="ml-2">Localização</div>
+            </div>
+            <div class="flex-1 mx-4 mt-4">
+                <div class="h-1 bg-gray-200"></div>
+            </div>
+            <div class="flex items-center">
+                <div id="step4-indicator" class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold">4</div>
+                <div class="ml-2">Medidas</div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Formulário -->
+    <div class="bg-white rounded-xl shadow-md p-8">
+        <form id="registro-form" method="POST" class="space-y-6">
+            <!-- Step 1: Informações Básicas -->
+            <div id="step1" class="step active">
+                <h2 class="text-xl font-semibold text-gray-800 pb-2 border-b mb-6">Informações Básicas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+                        <select name="sexo" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Selecione o sexo</option>
+                            <option value="Macho">Macho</option>
+                            <option value="Fêmea">Fêmea</option>
+                            <option value="Indeterminado">Indeterminado</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome Científico</label>
+                        <input type="text" name="nome_cientifico" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Anilha</label>
+                        <input type="text" name="anilha" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Espécie</label>
+                        <input type="text" name="especie" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Registro</label>
+                        <select name="tipo_registro" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Selecione o tipo</option>
+                            <option value="Captura">Captura</option>
+                            <option value="Recaptura">Recaptura</option>
+                            <option value="Encalhe">Encalhe</option>
+                            <option value="Ninho">Ninho</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Data e Hora -->
+            <div id="step2" class="step hidden">
+                <h2 class="text-xl font-semibold text-gray-800 pb-2 border-b mb-6">Data e Hora</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
+                        <input type="date" name="data" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Horário</label>
+                        <input type="time" name="horario" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                        <input type="text" name="estado" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Localização -->
+            <div id="step3" class="step hidden">
+                <h2 class="text-xl font-semibold text-gray-800 pb-2 border-b mb-6">Localização</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                        <select name="estado" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Selecione o estado</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <!-- Adicionar outros estados se necessário -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Município</label>
+                        <input type="text" name="municipio" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Praia</label>
+                        <input type="text" name="praia" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
         </div>   
 
-        <div class="teste">
-            <label for="tipo_registro" class="item">Tipo de Registro</label>
-            <input type="text" name="tipo_registro" id="tipo_registro" required>
-                
-            <label for="anilha" class="item">Anilha</label>
-            <input type="text" name="anilha" id="anilha" required>
+            <!-- Step 4: Medidas -->
+            <div id="step4" class="step hidden">
+                <h2 class="text-xl font-semibold text-gray-800 pb-2 border-b mb-6">Medidas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Comprimento do Casco (cm)</label>
+                        <input type="number" step="0.1" name="comprimento_casco" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
 
-            <div class="teste2 feminino">
-                <input type="radio" name="sexo" id="feminino" class="sexo"> <label for="feminino" class="sexo2">Feminino</label>  
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Largura do Casco (cm)</label>
+                        <input type="number" step="0.1" name="largura_casco" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade de Ovos</label>
+                        <input type="number" name="quantidade_ovos" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
             </div> 
         </div>
 
-        <button type="submit"><a href="">Continuar</a></button></a>
+            <!-- Botões de Navegação -->
+            <div class="flex justify-between pt-6 border-t">
+                <button type="button" id="prevBtn" onclick="navegarStep(-1)" 
+                        class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 hidden">
+                    Anterior
+                </button>
+                <div class="ml-auto flex space-x-4">
+                    <button type="button" onclick="history.back()" 
+                            class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        Cancelar
+                    </button>
+                    <button type="button" id="nextBtn" onclick="navegarStep(1)"
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        Próximo
+                    </button>
+                    <button type="submit" id="submitBtn" 
+                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 hidden">
+                        Registrar Tartaruga
+                    </button>
+                </div>
+            </div>
         </form>
-    </main>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+function updateProgressBar() {
+    const progress = (currentStep / totalSteps) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function updateStepIndicators() {
+    for (let i = 1; i <= totalSteps; i++) {
+        const indicator = document.getElementById(`step${i}-indicator`);
+        if (i === currentStep) {
+            indicator.classList.remove('bg-gray-200', 'text-gray-600');
+            indicator.classList.add('bg-blue-600', 'text-white');
+        } else if (i < currentStep) {
+            indicator.classList.remove('bg-gray-200', 'text-gray-600');
+            indicator.classList.add('bg-green-500', 'text-white');
+            indicator.innerHTML = '✓';
+        } else {
+            indicator.classList.remove('bg-blue-600', 'text-white', 'bg-green-500');
+            indicator.classList.add('bg-gray-200', 'text-gray-600');
+            indicator.innerHTML = i;
+        }
+    }
+}
+
+function showStep(step) {
+    document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+    document.getElementById(`step${step}`).classList.remove('hidden');
+    
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    prevBtn.classList.toggle('hidden', step === 1);
+    nextBtn.classList.toggle('hidden', step === totalSteps);
+    submitBtn.classList.toggle('hidden', step !== totalSteps);
+    
+    updateProgressBar();
+    updateStepIndicators();
+}
+
+function validateStep(step) {
+    const currentStepElement = document.getElementById(`step${step}`);
+    const inputs = currentStepElement.querySelectorAll('input[required], select[required]');
+    let isValid = true;
+    
+    inputs.forEach(input => {
+        if (!input.value) {
+            isValid = false;
+            input.classList.add('border-red-500');
+        } else {
+            input.classList.remove('border-red-500');
+        }
+    });
+    
+    return isValid;
+}
+
+function navegarStep(n) {
+    if (n > 0 && !validateStep(currentStep)) {
+        alert('Por favor, preencha todos os campos obrigatórios antes de continuar.');
+        return;
+    }
+    
+    currentStep += n;
+    showStep(currentStep);
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+    showStep(1);
+    
+    // Validação do formulário antes do envio
+    document.getElementById('registro-form').onsubmit = function(e) {
+        if (!validateStep(currentStep)) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos obrigatórios.');
+        }
+    };
+});
+</script>
+{% endblock %}

@@ -3,41 +3,200 @@
 {% block title %}Página Inicial{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="item1">
-            <nav>
-                <img src="../static/imagens/pagina_inicial/logo-casco.svg" alt="" class="imagem-logo">
-                <img src="../static/imagens/pagina_inicial/foto.svg" alt="" class="imagem-foto">
-                <p>{{ usuario.username }}</p>
-                <a href="{{ url_for('pagina_inicial') }}" class="inicio"><img src="../static/imagens/pagina_inicial/Vector (3).svg" alt="Ícone de casa">Início</a>
-                <a href="#"><img src="../static/imagens/pagina_inicial/turtle (1) 13 1.svg" alt="Ícone de tartarugas">Registros</a>
-                <a href="#"><img src="../static/imagens/pagina_inicial/Vector (4).svg" alt="Íconde de mãos dadas">Equipes</a>
-                <a href="#"><img src="../static/imagens/pagina_inicial/Vector (5).svg" alt="Ícone de mão apontando">Cadastrar</a>
-                <a href="{{ url_for('perfil_usuario') }}"><img src="../static/imagens/pagina_inicial/Vector (6).svg" alt="Ícone de usuário">Perfil</a>
-                <a href="{{ url_for('logout') }}">
-                    <img src="../static/imagens/pagina_inicial/file-icon 1.svg" alt="Ícone de sair" class="sair">
-                    Sair
-                </a>
-            </nav>
-        </div>
-        <div class="item2">
-            <header>
-                <h1>Olá {{ usuario.username }}, seja bem vindo!</h1>
-            </header>
-            <main>
-                <h1>Conheça o </h1>
-                <h1 class="text2">Projeto Casco</h1>
+<div class="max-w-7xl mx-auto">
+    <!-- Header com Stats -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl shadow-xl p-8 mb-8">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center space-x-6 mb-4 md:mb-0">
+                <div class="relative">
+                    <img src="../static/imagens/perfil_usuario/foto.svg" 
+                         alt="Foto de Perfil" 
+                         class="w-20 h-20 rounded-full bg-white p-1 ring-4 ring-blue-400">
+                    <span class="absolute bottom-1 right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></span>
+                </div>
                 <div>
-                    <p>O Casco surge como uma plataforma para dar <br>suporte e apoio aos pesquisadores e biólogos no <br>seu trabalho de campo. O sistema web é <br>apresentado como ferramenta de captação de <br>dados oruindos das tartarugas marinhas <br>analisadas. </p>
-                    <p>Este sistema oferece ao usuário uma melhor <br>experiência no seu ambiente de trabalho, <br>permitindo a coleta de dados referentes às <br>tartarugas de forma precisa e ágil. Tornando <br>assim o trabalho realizado por eles mais <br>produtivo.</p>
+                    <h1 class="text-3xl font-bold text-white">Olá, {{ usuario.username }}!</h1>
+                    <p class="text-blue-200">{{ usuario.tipo | title }}</p>
                 </div>
-                <div class="imagens">
-                    <img src="../static/imagens/pagina_inicial/tartaruga2.svg" alt="Imagem de tartaruga" class="imagem-tartaruga1">
-                    <img src="../static/imagens/pagina_inicial/tartaruga1.svg" alt="Imagem de tartaruga" class="imagem-tartaruga2">
-                    <img src="../static/imagens/pagina_inicial/circulo1.svg" alt="Círculo" class="imagem-circulo1">
-                    <img src="../static/imagens/pagina_inicial/circulo2.svg" alt="Círculo" class="imagem-circulo2">
+            </div>
+            <div class="flex space-x-4">
+                <div class="text-center px-6 py-3 bg-white bg-opacity-10 rounded-lg">
+                    <p class="text-2xl font-bold text-white">{{ equipes_lideradas|length }}</p>
+                    <p class="text-sm text-blue-200">Equipes Lideradas</p>
                 </div>
-            </main>
+                <div class="text-center px-6 py-3 bg-white bg-opacity-10 rounded-lg">
+                    <p class="text-2xl font-bold text-white">{{ equipes_participantes|length }}</p>
+                    <p class="text-sm text-blue-200">Equipes Participando</p>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Seção de Convites -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Card de Convites Pendentes -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            Convites Pendentes
+                        </h2>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                            {{ convites_pendentes|length }}
+                        </span>
+                    </div>
+
+                    <div class="space-y-3">
+                        {% for convite in convites_pendentes %}
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-medium text-gray-900">{{ convite.equipe.nome }}</h3>
+                                    <p class="text-sm text-gray-500">Líder: {{ convite.equipe.lider.username }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">{{ convite.data_envio.strftime('%d/%m/%Y') }}</p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button onclick="responderConvite({{ convite.id }}, 'aceitar')"
+                                            class="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="responderConvite({{ convite.id }}, 'rejeitar')"
+                                            class="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-colors">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-8">
+                            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                            </svg>
+                            <p class="text-gray-500">Nenhum convite pendente</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="grid grid-cols-1 gap-4">
+                {% if usuario.admin %}
+                <a href="{{ url_for('equipes') }}" 
+                   class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
+                    <div class="flex items-center text-blue-600">
+                        <div class="p-3 bg-blue-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                        </div>
+            <div>
+                            <h3 class="font-semibold text-lg">Criar Equipe</h3>
+                            <p class="text-gray-600 text-sm">Crie uma nova equipe de pesquisa</p>
+                        </div>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Seção Principal - Minhas Equipes -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Minhas Equipes
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for equipe in equipes_lideradas %}
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white transform transition-all duration-200 hover:scale-105">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold text-lg">{{ equipe.nome }}</h3>
+                                    <p class="text-blue-100 text-sm">Líder</p>
+                                    <p class="text-blue-100 text-sm mt-2">{{ equipe.convites|selectattr('status', 'equalto', 'aceito')|list|length + 1 }} membros</p>
+                                </div>
+                                <a href="{{ url_for('detalhes_equipe', id=equipe.id) }}" 
+                                   class="text-white hover:text-blue-100 transition-colors p-2">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% for equipe in equipes_participantes %}
+                        <div class="bg-white rounded-xl p-6 border-2 border-blue-100 transform transition-all duration-200 hover:border-blue-300 hover:shadow-md">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-semibold text-lg text-gray-900">{{ equipe.nome }}</h3>
+                                    <p class="text-gray-500 text-sm">Membro</p>
+                                    <p class="text-gray-500 text-sm mt-2">{{ equipe.convites|selectattr('status', 'equalto', 'aceito')|list|length + 1 }} membros</p>
+                                </div>
+                                <a href="{{ url_for('detalhes_equipe', id=equipe.id) }}" 
+                                   class="text-blue-600 hover:text-blue-800 transition-colors p-2">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% if not equipes_lideradas and not equipes_participantes %}
+                        <div class="col-span-2 text-center py-12">
+                            <svg class="w-20 h-20 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            <p class="text-gray-500 text-lg">Você ainda não participa de nenhuma equipe</p>
+                            <p class="text-gray-400 text-sm mt-2">Aguarde um convite ou crie sua própria equipe</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function responderConvite(conviteId, acao) {
+    const mensagem = acao === 'aceitar' ? 'aceitar' : 'rejeitar';
+    if (confirm(`Tem certeza que deseja ${mensagem} este convite?`)) {
+        fetch(`/responder_convite/${conviteId}/${acao}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Erro ao responder convite');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            window.location.reload();
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+    }
+}
+</script>
 {% endblock %}

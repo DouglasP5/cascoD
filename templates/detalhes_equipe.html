@@ -11,78 +11,157 @@
                 <h1 class="text-3xl font-bold text-gray-800">{{ equipe.nome }}</h1>
                 <p class="text-gray-600 mt-2">Líder: {{ equipe.lider.username }}</p>
             </div>
-            {% if usuario.id == equipe.lider_id or usuario.admin %}
-            <button onclick="openModal()" 
-                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Convidar Membro
-            </button>
-            {% endif %}
+            <div class="flex space-x-4">
+                {% if usuario.id == equipe.lider_id or usuario.admin %}
+                <button onclick="openModal()" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Convidar Membro
+                </button>
+                {% endif %}
+                
+                <a href="{{ url_for('registrar_tartaruga', equipe_id=equipe.id) }}"
+                   class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Novo Registro
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Lista de Membros Ativos -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                Membros Ativos
-            </h2>
-            <div class="space-y-4">
-                {% for membro in membros %}
-                <div class="flex items-center p-4 bg-gray-50 rounded-lg">
-                    <img src="../static/imagens/perfil_usuario/foto.svg" 
-                         alt="Foto" class="w-10 h-10 rounded-full mr-3">
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-900">{{ membro.username }}</p>
-                        <p class="text-sm text-gray-500">{{ membro.tipo }}</p>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Membros e Convites (2 colunas) -->
+        <div class="lg:col-span-1">
+            <!-- Lista de Membros Ativos -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Membros Ativos
+                </h2>
+                <div class="space-y-4">
+                    {% for membro in membros %}
+                    <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                        <img src="../static/imagens/perfil_usuario/foto.svg" 
+                             alt="Foto" class="w-10 h-10 rounded-full mr-3">
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">{{ membro.username }}</p>
+                            <p class="text-sm text-gray-500">{{ membro.tipo }}</p>
+                        </div>
+                        {% if usuario.id == equipe.lider_id and membro.id != equipe.lider_id %}
+                        <button onclick="removerMembro({{ membro.id }})" 
+                                class="ml-auto text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                        {% endif %}
                     </div>
-                    {% if usuario.id == equipe.lider_id and membro.id != equipe.lider_id %}
-                    <button onclick="removerMembro({{ membro.id }})" 
-                            class="ml-auto text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                    {% endif %}
+                    {% endfor %}
                 </div>
-                {% endfor %}
+            </div>
+
+            <!-- Lista de Convites Pendentes -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Convites Pendentes
+                </h2>
+                <div class="space-y-4">
+                    {% for convite in convites_pendentes %}
+                    <div class="flex items-center p-4 bg-yellow-50 rounded-lg">
+                        <img src="../static/imagens/perfil_usuario/foto.svg" 
+                             alt="Foto" class="w-10 h-10 rounded-full mr-3">
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">{{ convite.usuario.username }}</p>
+                            <p class="text-sm text-gray-500">Convidado em: {{ convite.data_envio.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                        {% if usuario.id == equipe.lider_id %}
+                        <button onclick="cancelarConvite({{ convite.id }})" 
+                                class="ml-auto text-yellow-600 hover:text-yellow-800 p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-500 text-center py-4">Nenhum convite pendente</p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
-        <!-- Lista de Convites Pendentes -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Convites Pendentes
-            </h2>
-            <div class="space-y-4">
-                {% for convite in convites_pendentes %}
-                <div class="flex items-center p-4 bg-yellow-50 rounded-lg">
-                    <img src="../static/imagens/perfil_usuario/foto.svg" 
-                         alt="Foto" class="w-10 h-10 rounded-full mr-3">
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-900">{{ convite.usuario.username }}</p>
-                        <p class="text-sm text-gray-500">Convidado em: {{ convite.data_envio.strftime('%d/%m/%Y') }}</p>
-                    </div>
-                    {% if usuario.id == equipe.lider_id %}
-                    <button onclick="cancelarConvite({{ convite.id }})" 
-                            class="ml-auto text-yellow-600 hover:text-yellow-800 p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        <!-- Registros de Tartarugas (2 colunas) -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                    </button>
-                    {% endif %}
+                        Registros de Tartarugas
+                    </h2>
+                    <a href="{{ url_for('registrar_tartaruga', equipe_id=equipe.id) }}" 
+                       class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Novo Registro
+                    </a>
                 </div>
-                {% else %}
-                <p class="text-gray-500 text-center py-4">Nenhum convite pendente</p>
-                {% endfor %}
+
+                <!-- Tabela de Registros -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Anilha</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Espécie</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registrado por</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for tartaruga in equipe.tartarugas %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">{{ tartaruga.anilha }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ tartaruga.especie }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if tartaruga.tipo_registro == 'Captura' %}bg-green-100 text-green-800
+                                    {% elif tartaruga.tipo_registro == 'Recaptura' %}bg-blue-100 text-blue-800
+                                    {% elif tartaruga.tipo_registro == 'Encalhe' %}bg-red-100 text-red-800
+                                    {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                        {{ tartaruga.tipo_registro }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ tartaruga.registrador.username }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">{{ tartaruga.data_registro.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ url_for('detalhes_tartaruga', tartaruga_id=tartaruga.id) }}" 
+                                       class="text-blue-600 hover:text-blue-900">Detalhes</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                    Nenhum registro encontrado
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

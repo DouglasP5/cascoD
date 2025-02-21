@@ -1,24 +1,90 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Casco{% endblock %}</title>
+    <title>{% block title %}{% endblock %} - Projeto Casco</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% block extra_css %}{% endblock %}
+    <style>
+        @media (max-width: 768px) {
+            .sidebar-mobile {
+                position: fixed;
+                left: -100%;
+                transition: 0.3s;
+                z-index: 40;
+            }
+            .sidebar-mobile.active {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
-    <div class="flex">
-        {% if usuario %}
+    <div class="flex min-h-screen">
+        <!-- Sidebar Mobile Toggle -->
+        <button id="sidebarToggle" class="md:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white p-2 rounded-lg">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+
+        <!-- Sidebar -->
+        <div class="sidebar-mobile md:sidebar-desktop w-64 bg-blue-600 min-h-screen">
             {% include 'components/navbar.html' %}
-        {% endif %}
-        
-        <!-- Conteúdo Principal -->
-        <div class="flex-1 p-8 bg-gray-50">
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1 p-4 md:p-8">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-8">
+                        {% for category, message in messages %}
+                            <div class="p-4 mb-4 rounded-lg {% if category == 'success' %}bg-green-100 text-green-700{% elif category == 'danger' %}bg-red-100 text-red-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             {% block content %}{% endblock %}
         </div>
     </div>
+
+    <!-- Scripts -->
+    <script>
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar-mobile').classList.toggle('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.querySelector('.sidebar-mobile');
+            const toggle = document.getElementById('sidebarToggle');
+            
+            if (window.innerWidth < 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) && 
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                document.querySelector('.sidebar-mobile').classList.remove('active');
+            }
+        });
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>
