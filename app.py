@@ -1,14 +1,58 @@
-from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
+from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify, g
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.pool import QueuePool
+from functools import wraps
+import sqlalchemy.exc
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sua_chave_secreta_aqui'
+
+# Configuração do pool de conexões
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://u349037776_cascudinho:cascudinhoUI1@receitadenatal.com.br/u349037776_cascudinho')
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_size': 10,
+    'pool_recycle': 280,
+    'pool_pre_ping': True,
+    'pool_timeout': 30
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Inicialização do SQLAlchemy com as novas configurações
 db = SQLAlchemy(app)
+
+# Função para reconectar ao banco
+def get_db():
+    if 'db' not in g:
+        g.db = db.create_scoped_session()
+    return g.db
+
+@app.before_request
+def before_request():
+    g.db = db.session()
+
+@app.teardown_appcontext
+def teardown_db(exception=None):
+    db = getattr(g, 'db', None)
+    if db is not None:
+        db.close()
+
+# Decorador para gerenciar conexões
+def handle_db_connection(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except sqlalchemy.exc.OperationalError as e:
+            if "MySQL server has gone away" in str(e):
+                db.session.rollback()
+                db.session.remove()
+                return f(*args, **kwargs)
+            raise
+    return decorated_function
 
 class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,17 +99,10 @@ class RegistroTartaruga(db.Model):
     quantidade_ovos = db.Column(db.Integer, nullable=False)
 
 
-@app.route('/', methods=['GET', 'POST'])
-def dashboard():
-    if request.method == 'POST':
-        nome = request.form.get('nome')
-        email = request.form.get('email')
-        senha = request.form.get('senha')
-        
-        return redirect(url_for('pagina_inicial'))
-    
+@app.route('/')
+def index():
     return render_template('index.html')
-    
+
 @app.before_first_request
 def criar_usuario_admin():
     usuario_admin = Usuario.query.filter_by(admin=True).first()
@@ -80,43 +117,66 @@ def criar_usuario_admin():
         print("Usuário administrador criado com sucesso!")
 
 @app.route('/register', methods=['GET', 'POST'])
+@handle_db_connection
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        senha = request.form['senha']
-        usuario_existente = Usuario.query.filter_by(email=email).first()
-        
-        if usuario_existente:
-            flash('Email já registrado! Tente outro.', 'danger')
+        try:
+            username = request.form['username']
+            email = request.form['email']
+            senha = request.form['senha']
+            
+            usuario_existente = Usuario.query.filter_by(email=email).first()
+            
+            if usuario_existente:
+                flash('Email já registrado! Tente outro.', 'danger')
+                return redirect(url_for('register'))
+            
+            hashed_senha = generate_password_hash(senha, method='sha256')
+            novo_usuario = Usuario(username=username, email=email, senha=hashed_senha, tipo='participante', admin=False)
+            
+            db.session.add(novo_usuario)
+            db.session.commit()
+            
+            session['user_id'] = novo_usuario.id
+            flash('Registrado com sucesso! Bem-vindo!', 'success')
+            return redirect(url_for('pagina_inicial'))
+            
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f"Erro no registro: {str(e)}")
+            flash('Erro ao registrar. Tente novamente.', 'danger')
             return redirect(url_for('register'))
-        
-        hashed_senha = generate_password_hash(senha, method='sha256')
-        novo_usuario = Usuario(username=username, email=email, senha=hashed_senha, tipo='participante', admin=False)
-        
-        db.session.add(novo_usuario)
-        db.session.commit()
-
-        session['user_id'] = novo_usuario.id
-        
-        flash('Registrado com sucesso! Bem-vindo!', 'success')
-        return redirect(url_for('pagina_inicial'))
     
     return render_template('register.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
+@handle_db_connection
 def login():
     if request.method == 'POST':
-        email = request.form['email']
-        senha = request.form['senha']
-        usuario = Usuario.query.filter_by(email=email).first()
-        if usuario and check_password_hash(usuario.senha, senha):
-            session['user_id'] = usuario.id
-            flash('Login bem-sucedido!', 'success')
-            return redirect(url_for('pagina_inicial')) 
-        else:
-            flash('Email ou senha incorretos.', 'danger')
+        try:
+            email = request.form.get('email')
+            senha = request.form.get('senha')
+            
+            if not email or not senha:
+                flash('Por favor, preencha todos os campos.', 'danger')
+                return redirect(url_for('login'))
+                
+            usuario = Usuario.query.filter_by(email=email).first()
+            
+            if usuario and check_password_hash(usuario.senha, senha):
+                session['user_id'] = usuario.id
+                flash('Login realizado com sucesso!', 'success')
+                return redirect(url_for('pagina_inicial'))
+            else:
+                flash('Email ou senha incorretos.', 'danger')
+                return redirect(url_for('login'))
+                
+        except Exception as e:
+            app.logger.error(f"Erro no login: {str(e)}")
+            flash('Erro ao fazer login. Tente novamente.', 'danger')
+            return redirect(url_for('login'))
+            
     return render_template('login.html')
 
 
@@ -128,6 +188,7 @@ def pagina_inicial():
     
     usuario = Usuario.query.get(session['user_id'])
     if not usuario:
+        session.clear()  # Limpa a sessão se o usuário não for encontrado
         flash('Usuário não encontrado!', 'danger')
         return redirect(url_for('login'))
     
@@ -147,24 +208,63 @@ def logout():
     flash('Deslogado com sucesso!', 'success')
     return redirect(url_for('login'))
 
-@app.route('/perfil_usuario')
-def me():
+@app.route('/perfil_usuario', methods=['GET', 'POST'])
+def perfil_usuario():
     if 'user_id' not in session:
-        flash('Você precisa estar logado para ver seus dados!', 'warning')
+        flash('Você precisa estar logado para ver seu perfil!', 'warning')
         return redirect(url_for('login'))
+
     usuario = Usuario.query.get(session['user_id'])
     if not usuario:
+        session.clear()
         flash('Usuário não encontrado!', 'danger')
         return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        try:
+            # Pega os dados do formulário
+            novo_username = request.form.get('username')
+            novo_email = request.form.get('email')
+
+            # Validação básica
+            if not novo_username or not novo_email:
+                flash('Por favor, preencha todos os campos!', 'danger')
+                return render_template('perfil_usuario.html', usuario=usuario)
+
+            # Atualiza os dados
+            db.session.execute(
+                'UPDATE usuario SET username = :username, email = :email WHERE id = :id',
+                {'username': novo_username, 'email': novo_email, 'id': usuario.id}
+            )
+            db.session.commit()
+
+            # Atualiza o objeto usuário com os novos dados
+            usuario.username = novo_username
+            usuario.email = novo_email
+            
+            flash('Perfil atualizado com sucesso!', 'success')
+            return redirect(url_for('perfil_usuario'))
+
+        except Exception as e:
+            db.session.rollback()
+            if 'Duplicate' in str(e):
+                flash('Este nome de usuário ou email já está em uso!', 'danger')
+            else:
+                flash('Erro ao atualizar perfil. Tente novamente.', 'danger')
+            return render_template('perfil_usuario.html', usuario=usuario)
+
     return render_template('perfil_usuario.html', usuario=usuario)
 
 @app.route('/api/perfil_usuario', methods=['GET'])
-def api_me():
+@handle_db_connection
+def api_perfil_usuario():
     if 'user_id' not in session:
         return jsonify({"error": "Você precisa estar logado para ver seus dados!"}), 403
+    
     usuario = Usuario.query.get(session['user_id'])
     if not usuario:
         return jsonify({"error": "Usuário não encontrado!"}), 404
+    
     return jsonify({
         "username": usuario.username,
         "email": usuario.email,
@@ -365,6 +465,98 @@ def detalhes_tartaruga(tartaruga_id):
     
     return render_template('detalhes_tartaruga.html', tartaruga=tartaruga)
 
+@app.route('/alterar_senha', methods=['GET', 'POST'])
+@handle_db_connection
+def alterar_senha():
+    if 'user_id' not in session:
+        flash('Você precisa estar logado para alterar a senha!', 'warning')
+        return redirect(url_for('login'))
+        
+    usuario = Usuario.query.get(session['user_id'])
+    if not usuario:
+        session.clear()
+        flash('Usuário não encontrado!', 'danger')
+        return redirect(url_for('login'))
+        
+    if request.method == 'POST':
+        senha_atual = request.form.get('senha_atual')
+        nova_senha = request.form.get('nova_senha')
+        confirmar_senha = request.form.get('confirmar_senha')
+        
+        if not check_password_hash(usuario.senha, senha_atual):
+            flash('Senha atual incorreta!', 'danger')
+            return redirect(url_for('alterar_senha'))
+            
+        if nova_senha != confirmar_senha:
+            flash('As senhas não coincidem!', 'danger')
+            return redirect(url_for('alterar_senha'))
+            
+        try:
+            usuario.senha = generate_password_hash(nova_senha)
+            db.session.commit()
+            flash('Senha alterada com sucesso!', 'success')
+            return redirect(url_for('perfil_usuario'))
+        except:
+            db.session.rollback()
+            flash('Erro ao alterar senha. Tente novamente.', 'danger')
+            return redirect(url_for('alterar_senha'))
+            
+    return render_template('alterar_senha.html', usuario=usuario)
+
+@app.route('/atualizar_perfil', methods=['POST'])
+@handle_db_connection
+def atualizar_perfil():
+    if 'user_id' not in session:
+        flash('Você precisa estar logado!', 'warning')
+        return redirect(url_for('login'))
+        
+    usuario = Usuario.query.get(session['user_id'])
+    if not usuario:
+        flash('Usuário não encontrado!', 'danger')
+        return redirect(url_for('login'))
+        
+    try:
+        username = request.form.get('username')
+        email = request.form.get('email')
+        
+        # Verifica se email já existe para outro usuário
+        usuario_existente = Usuario.query.filter(
+            Usuario.email == email,
+            Usuario.id != usuario.id
+        ).first()
+        
+        if usuario_existente:
+            flash('Este email já está em uso!', 'danger')
+            return redirect(url_for('perfil_usuario'))
+            
+        usuario.username = username
+        usuario.email = email
+        
+        db.session.commit()
+        flash('Perfil atualizado com sucesso!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash('Erro ao atualizar perfil. Tente novamente.', 'danger')
+        
+    return redirect(url_for('perfil_usuario'))
+
+@app.route('/check_availability')
+def check_availability():
+    field = request.args.get('field')
+    value = request.args.get('value')
+    user_id = session.get('user_id')
+    
+    if not field or not value:
+        return jsonify({'available': False})
+    
+    # Verifica se o valor já existe para outro usuário
+    query = Usuario.query.filter(
+        getattr(Usuario, field) == value,
+        Usuario.id != user_id
+    ).first()
+    
+    return jsonify({'available': not bool(query)})
 
 if __name__ == '__main__':
     app.run(debug=True)

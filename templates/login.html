@@ -16,16 +16,18 @@
             <h1>Faça seu login</h1>
             <p class="comp">Preencha seus dados</p>
 
-            <form action="#">
+            <form action="{{ url_for('login') }}" method="POST">
                 <div class="container">
-                    <label><img src="../static/imagens/login/email-icon.png" alt="Email - Ícone"><input type="text" name="email" placeholder="Email"></label>
+                    <label><img src="../static/imagens/login/email-icon.png" alt="Email - Ícone">
+                        <input type="text" name="email" placeholder="Email" required>
+                    </label>
                 </div>
                 <div class="container password">
-                    <label><img src="../static/imagens/login/password-icon.png" alt="Senha - Ícone" class="senha"><input type="password" name="senha" placeholder="Senha"></label>
+                    <label><img src="../static/imagens/login/password-icon.png" alt="Senha - Ícone" class="senha">
+                        <input type="password" name="senha" placeholder="Senha" required>
+                    </label>
                 </div>
-                <a href="{{ url_for('pagina_inicial') }}" class="submit">
-                    <input class="submit_b" type="submit" value="Entrar">
-                </a>
+                <button type="submit" class="submit_b">Entrar</button>
             </form>
             <p class="text-center-mt-3">Não tem uma conta? <a href="{{ url_for('register') }}">Registrar-se</a></p>
             <div class="alert alert-danger d-none" id="errorAlert">

@@ -19,11 +19,11 @@
         <div class="item2">
         <h1>Crie sua conta</h1>
         <p>Preencha seus dados</p>
-        <form action="{{ url_for('pagina_inicial') }}" method="POST">
+        <form action="{{ url_for('register') }}" method="POST">
             <div class="container">
                 <label>
                     <img src="../static/imagens/signup/Vector.svg" alt="Ícone de usuário">
-                    <input type="text" name="nome" placeholder="Nome" required>
+                    <input type="text" name="username" placeholder="Nome" required>
                 </label>
             </div>
             <br>
@@ -41,9 +41,7 @@
                 </label>
             </div>
             <br>
-            <a href="{{ url_for('pagina_inicial') }}" class="submit">
-                <input class="submit" type="submit" value="Cadastrar">
-            </a>
+            <button type="submit" class="submit">Cadastrar</button>
         </form>
         <p class="text-center-mt-3">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
         </div>

@@ -134,3 +134,16 @@ body{
     margin-bottom: 3vw;
     margin-top: 1vw;
 }
+.botoes {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+.submit.salvar {
+    background-color: #0063BE;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 40px;
+    cursor: pointer;
+}

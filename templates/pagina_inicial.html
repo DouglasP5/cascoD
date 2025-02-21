@@ -1,45 +1,43 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página inicial</title>
-    <link rel="stylesheet" href="../static/pagina_inicial.css">
-</head>
-<body>
+{% extends "layouts/base.html" %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
     <div class="container">
         <div class="item1">
             <nav>
                 <img src="../static/imagens/pagina_inicial/logo-casco.svg" alt="" class="imagem-logo">
                 <img src="../static/imagens/pagina_inicial/foto.svg" alt="" class="imagem-foto">
-                <p>Luiz</p>
+                <p>{{ usuario.username }}</p>
                 <a href="{{ url_for('pagina_inicial') }}" class="inicio"><img src="../static/imagens/pagina_inicial/Vector (3).svg" alt="Ícone de casa">Início</a>
                 <a href="#"><img src="../static/imagens/pagina_inicial/turtle (1) 13 1.svg" alt="Ícone de tartarugas">Registros</a>
                 <a href="#"><img src="../static/imagens/pagina_inicial/Vector (4).svg" alt="Íconde de mãos dadas">Equipes</a>
                 <a href="#"><img src="../static/imagens/pagina_inicial/Vector (5).svg" alt="Ícone de mão apontando">Cadastrar</a>
                 <a href="{{ url_for('perfil_usuario') }}"><img src="../static/imagens/pagina_inicial/Vector (6).svg" alt="Ícone de usuário">Perfil</a>
-                <a href="{{ url_for('index') }}"><img src="../static/imagens/pagina_inicial/file-icon 1.svg" alt="Ícone de sair" class="sair">Sair</a>
-        </nav>
+                <a href="{{ url_for('logout') }}">
+                    <img src="../static/imagens/pagina_inicial/file-icon 1.svg" alt="Ícone de sair" class="sair">
+                    Sair
+                </a>
+            </nav>
+        </div>
+        <div class="item2">
+            <header>
+                <h1>Olá {{ usuario.username }}, seja bem vindo!</h1>
+            </header>
+            <main>
+                <h1>Conheça o </h1>
+                <h1 class="text2">Projeto Casco</h1>
+                <div>
+                    <p>O Casco surge como uma plataforma para dar <br>suporte e apoio aos pesquisadores e biólogos no <br>seu trabalho de campo. O sistema web é <br>apresentado como ferramenta de captação de <br>dados oruindos das tartarugas marinhas <br>analisadas. </p>
+                    <p>Este sistema oferece ao usuário uma melhor <br>experiência no seu ambiente de trabalho, <br>permitindo a coleta de dados referentes às <br>tartarugas de forma precisa e ágil. Tornando <br>assim o trabalho realizado por eles mais <br>produtivo.</p>
+                </div>
+                <div class="imagens">
+                    <img src="../static/imagens/pagina_inicial/tartaruga2.svg" alt="Imagem de tartaruga" class="imagem-tartaruga1">
+                    <img src="../static/imagens/pagina_inicial/tartaruga1.svg" alt="Imagem de tartaruga" class="imagem-tartaruga2">
+                    <img src="../static/imagens/pagina_inicial/circulo1.svg" alt="Círculo" class="imagem-circulo1">
+                    <img src="../static/imagens/pagina_inicial/circulo2.svg" alt="Círculo" class="imagem-circulo2">
+                </div>
+            </main>
+        </div>
     </div>
-    <div class="item2">
-        <header>
-            <h1>Olá, seja bem vindo!</h1>
-        </header>
-        <main>
-            <h1>Conheça o </h1>
-            <h1 class="text2">Projeto Casco</h1>
-            <div>
-                <p>O Casco surge como uma plataforma para dar <br>suporte e apoio aos pesquisadores e biólogos no <br>seu trabalho de campo. O sistema web é <br>apresentado como ferramenta de captação de <br>dados oruindos das tartarugas marinhas <br>analisadas. </p>
-                <p>Este sistema oferece ao usuário uma melhor <br>experiência no seu ambiente de trabalho, <br>permitindo a coleta de dados referentes às <br>tartarugas de forma precisa e ágil. Tornando <br>assim o trabalho realizado por eles mais <br>produtivo.</p>
-            </div>
-            <div class="imagens">
-                <img src="../static/imagens/pagina_inicial/tartaruga2.svg" alt="Imagem de tartaruga" class="imagem-tartaruga1">
-                <img src="../static/imagens/pagina_inicial/tartaruga1.svg" alt="Imagem de tartaruga" class="imagem-tartaruga2">
-                <img src="../static/imagens/pagina_inicial/circulo1.svg" alt="Círculo" class="imagem-circulo1">
-                <img src="../static/imagens/pagina_inicial/circulo2.svg" alt="Círculo" class="imagem-circulo2">
-            </div>
-        </main>
-    </div>
-    </div>
-</body>
-</html>
+{% endblock %}
