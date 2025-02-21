@@ -1,0 +1,154 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Detalhes da Equipe{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">{{ equipe.nome }}</h1>
+                <p class="text-gray-600 mt-2">Líder: {{ equipe.lider.username }}</p>
+            </div>
+            {% if usuario.id == equipe.lider_id or usuario.admin %}
+            <button onclick="openModal()" 
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Convidar Membro
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Lista de Membros Ativos -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Membros Ativos
+            </h2>
+            <div class="space-y-4">
+                {% for membro in membros %}
+                <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                    <img src="../static/imagens/perfil_usuario/foto.svg" 
+                         alt="Foto" class="w-10 h-10 rounded-full mr-3">
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-900">{{ membro.username }}</p>
+                        <p class="text-sm text-gray-500">{{ membro.tipo }}</p>
+                    </div>
+                    {% if usuario.id == equipe.lider_id and membro.id != equipe.lider_id %}
+                    <button onclick="removerMembro({{ membro.id }})" 
+                            class="ml-auto text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Lista de Convites Pendentes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Convites Pendentes
+            </h2>
+            <div class="space-y-4">
+                {% for convite in convites_pendentes %}
+                <div class="flex items-center p-4 bg-yellow-50 rounded-lg">
+                    <img src="../static/imagens/perfil_usuario/foto.svg" 
+                         alt="Foto" class="w-10 h-10 rounded-full mr-3">
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-900">{{ convite.usuario.username }}</p>
+                        <p class="text-sm text-gray-500">Convidado em: {{ convite.data_envio.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                    {% if usuario.id == equipe.lider_id %}
+                    <button onclick="cancelarConvite({{ convite.id }})" 
+                            class="ml-auto text-yellow-600 hover:text-yellow-800 p-2 rounded-lg hover:bg-yellow-100 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <p class="text-gray-500 text-center py-4">Nenhum convite pendente</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Convidar Membro -->
+    <div id="modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-6">Convidar Membro</h2>
+            <form id="convite-form" method="POST" action="{{ url_for('convidar_membro_equipe', equipe_id=equipe.id) }}">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email do Usuário</label>
+                    <input type="email" name="email" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Enviar Convite
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openModal() {
+    document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.add('hidden');
+}
+
+function removerMembro(membroId) {
+    if (confirm('Tem certeza que deseja remover este membro da equipe?')) {
+        fetch(`/api/equipes/{{ equipe.id }}/membros/${membroId}`, {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao remover membro');
+            }
+        });
+    }
+}
+
+function cancelarConvite(conviteId) {
+    if (confirm('Tem certeza que deseja cancelar este convite?')) {
+        fetch(`/api/equipes/{{ equipe.id }}/convites/${conviteId}`, {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao cancelar convite');
+            }
+        });
+    }
+}
+</script>
+{% endblock %} 

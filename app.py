@@ -283,7 +283,7 @@ def deletar_usuario(id):
     return redirect(url_for('users'))
 
 @app.route('/equipes', methods=['GET', 'POST'])
-def criar_equipe():
+def equipes():
     if 'user_id' not in session:
         flash('Você precisa fazer login primeiro!', 'warning')
         return redirect(url_for('login'))
@@ -313,7 +313,7 @@ def criar_equipe():
         return redirect(url_for('equipes'))
     
     equipes = Equipe.query.filter_by(lider_id=usuario.id).all()
-    return render_template('equipes.html', equipes=equipes)
+    return render_template('equipes.html', equipes=equipes, usuario=usuario)
 
 
 @app.route('/ver_equipe/<int:equipe_id>')
@@ -339,22 +339,56 @@ def ver_equipe(equipe_id):
 
     return render_template('ver_equipe.html', equipe=equipe, integrantes=integrantes, is_lider=is_lider)
 
-@app.route('/convidar_membro/<int:equipe_id>', methods=['POST'])
-def convidar_membro(equipe_id):
+@app.route('/equipes/<int:equipe_id>/convidar', methods=['POST'])
+def convidar_membro_equipe(equipe_id):
     if 'user_id' not in session:
         flash('Você precisa fazer login primeiro!', 'warning')
         return redirect(url_for('login'))
-    email = request.form['email']
-    usuario = Usuario.query.filter_by(email=email).first()
-    equipe = Equipe.query.get(equipe_id)
-    if not usuario:
-        flash('Usuário com esse email não encontrado!', 'danger')
-        return redirect(url_for('ver_equipe', id=equipe.id))
-    convite = Convite(equipe_id=equipe.id, usuario_id=usuario.id)
-    db.session.add(convite)
-    db.session.commit()
-    flash(f'Convite enviado para {email} com sucesso!', 'success')
-    return redirect(url_for('ver_equipe', id=equipe.id))
+        
+    usuario = Usuario.query.get(session['user_id'])
+    equipe = Equipe.query.get_or_404(equipe_id)
+    
+    if usuario.id != equipe.lider_id and not usuario.admin:
+        flash('Apenas o líder pode convidar membros!', 'danger')
+        return redirect(url_for('detalhes_equipe', id=equipe_id))
+    
+    email = request.form.get('email')
+    if not email:
+        flash('Email é obrigatório!', 'danger')
+        return redirect(url_for('detalhes_equipe', id=equipe_id))
+    
+    membro = Usuario.query.filter_by(email=email).first()
+    if not membro:
+        flash('Usuário não encontrado!', 'danger')
+        return redirect(url_for('detalhes_equipe', id=equipe_id))
+    
+    # Verifica se já existe convite pendente
+    convite_existente = Convite.query.filter_by(
+        equipe_id=equipe_id,
+        usuario_id=membro.id,
+        status='pendente'
+    ).first()
+    
+    if convite_existente:
+        flash('Já existe um convite pendente para este usuário!', 'warning')
+        return redirect(url_for('detalhes_equipe', id=equipe_id))
+    
+    # Cria novo convite
+    novo_convite = Convite(
+        equipe_id=equipe_id,
+        usuario_id=membro.id,
+        status='pendente'
+    )
+    
+    try:
+        db.session.add(novo_convite)
+        db.session.commit()
+        flash('Convite enviado com sucesso!', 'success')
+    except:
+        db.session.rollback()
+        flash('Erro ao enviar convite!', 'danger')
+    
+    return redirect(url_for('detalhes_equipe', id=equipe_id))
 
 @app.route('/convites')
 def convites():
@@ -532,6 +566,184 @@ def check_availability():
     ).first()
     
     return jsonify({'available': not bool(query)})
+
+@app.route('/api/equipes', methods=['GET'])
+@handle_db_connection
+def get_equipes():
+    if 'user_id' not in session:
+        return jsonify({"error": "Não autorizado"}), 401
+        
+    usuario = Usuario.query.get(session['user_id'])
+    
+    # Busca equipes que o usuário lidera
+    equipes_lider = Equipe.query.filter_by(lider_id=usuario.id).all()
+    
+    # Busca equipes que o usuário participa
+    equipes_membro = Equipe.query.join(Convite).filter(
+        Convite.usuario_id == usuario.id,
+        Convite.status == 'aceito'
+    ).all()
+    
+    # Combina as equipes sem duplicatas
+    todas_equipes = list(set(equipes_lider + equipes_membro))
+    
+    return jsonify([{
+        'id': equipe.id,
+        'nome': equipe.nome,
+        'lider': equipe.lider.username,
+        'membros': [convite.usuario.username for convite in equipe.convites if convite.status == 'aceito']
+    } for equipe in todas_equipes])
+
+@app.route('/api/equipes', methods=['POST'])
+@handle_db_connection
+def criar_equipe():
+    if 'user_id' not in session:
+        return jsonify({"error": "Não autorizado"}), 401
+        
+    usuario = Usuario.query.get(session['user_id'])
+    if not usuario.admin:
+        return jsonify({"error": "Apenas administradores podem criar equipes"}), 403
+    
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Dados inválidos"}), 400
+            
+        nome = data.get('nome')
+        if not nome:
+            return jsonify({"error": "Nome da equipe é obrigatório"}), 400
+            
+        if Equipe.query.filter_by(nome=nome).first():
+            return jsonify({"error": "Já existe uma equipe com este nome"}), 400
+        
+        nova_equipe = Equipe(nome=nome, lider_id=usuario.id)
+        db.session.add(nova_equipe)
+        db.session.flush()  # Para obter o ID da equipe
+        
+        # Adiciona o líder como membro automaticamente
+        novo_convite = Convite(
+            equipe_id=nova_equipe.id,
+            usuario_id=usuario.id,
+            status='aceito'
+        )
+        db.session.add(novo_convite)
+        
+        db.session.commit()
+        return jsonify({
+            "message": "Equipe criada com sucesso",
+            "id": nova_equipe.id
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Erro ao criar equipe: {str(e)}")
+        return jsonify({"error": "Erro ao criar equipe"}), 500
+
+@app.route('/api/equipes/<int:id>', methods=['DELETE'])
+@handle_db_connection
+def deletar_equipe(id):
+    if 'user_id' not in session:
+        return jsonify({"error": "Não autorizado"}), 401
+        
+    usuario = Usuario.query.get(session['user_id'])
+    equipe = Equipe.query.get_or_404(id)
+    
+    if equipe.lider_id != usuario.id and not usuario.admin:
+        return jsonify({"error": "Apenas o líder ou admin pode deletar a equipe"}), 403
+    
+    try:
+        # Primeiro remove todos os convites associados à equipe
+        Convite.query.filter_by(equipe_id=id).delete()
+        
+        # Depois remove a equipe
+        db.session.delete(equipe)
+        db.session.commit()
+        return '', 204
+        
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Erro ao deletar equipe: {str(e)}")
+        return jsonify({"error": "Erro ao deletar equipe"}), 500
+
+@app.route('/equipes/<int:id>')
+def detalhes_equipe(id):
+    if 'user_id' not in session:
+        flash('Você precisa fazer login primeiro!', 'warning')
+        return redirect(url_for('login'))
+        
+    usuario = Usuario.query.get(session['user_id'])
+    equipe = Equipe.query.get_or_404(id)
+    
+    # Busca todos os membros ativos da equipe
+    membros = Usuario.query.join(Convite).filter(
+        Convite.equipe_id == id,
+        Convite.status == 'aceito'
+    ).all()
+    
+    # Adiciona o líder se ele não estiver na lista
+    if equipe.lider not in membros:
+        membros.append(equipe.lider)
+    
+    # Busca convites pendentes
+    convites_pendentes = Convite.query.filter_by(
+        equipe_id=id,
+        status='pendente'
+    ).order_by(Convite.data_envio.desc()).all()
+    
+    return render_template('detalhes_equipe.html', 
+                         equipe=equipe, 
+                         membros=membros,
+                         convites_pendentes=convites_pendentes,
+                         usuario=usuario)
+
+@app.route('/api/equipes/<int:equipe_id>/membros/<int:membro_id>', methods=['DELETE'])
+def remover_membro(equipe_id, membro_id):
+    if 'user_id' not in session:
+        return jsonify({"error": "Não autorizado"}), 401
+        
+    usuario = Usuario.query.get(session['user_id'])
+    equipe = Equipe.query.get_or_404(equipe_id)
+    
+    if usuario.id != equipe.lider_id and not usuario.admin:
+        return jsonify({"error": "Apenas o líder pode remover membros"}), 403
+    
+    if membro_id == equipe.lider_id:
+        return jsonify({"error": "Não é possível remover o líder da equipe"}), 400
+    
+    try:
+        Convite.query.filter_by(
+            equipe_id=equipe_id,
+            usuario_id=membro_id
+        ).delete()
+        
+        db.session.commit()
+        return '', 204
+    except:
+        db.session.rollback()
+        return jsonify({"error": "Erro ao remover membro"}), 500
+
+@app.route('/api/equipes/<int:equipe_id>/convites/<int:convite_id>', methods=['DELETE'])
+def cancelar_convite(equipe_id, convite_id):
+    if 'user_id' not in session:
+        return jsonify({"error": "Não autorizado"}), 401
+        
+    usuario = Usuario.query.get(session['user_id'])
+    equipe = Equipe.query.get_or_404(equipe_id)
+    
+    if usuario.id != equipe.lider_id and not usuario.admin:
+        return jsonify({"error": "Apenas o líder pode cancelar convites"}), 403
+    
+    try:
+        convite = Convite.query.get_or_404(convite_id)
+        if convite.equipe_id != equipe_id:
+            return jsonify({"error": "Convite não pertence a esta equipe"}), 400
+            
+        db.session.delete(convite)
+        db.session.commit()
+        return '', 204
+    except:
+        db.session.rollback()
+        return jsonify({"error": "Erro ao cancelar convite"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
