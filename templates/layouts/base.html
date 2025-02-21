@@ -10,7 +10,9 @@
 </head>
 <body class="bg-gray-100">
     <div class="flex">
-        {% include 'components/navbar.html' %}
+        {% if usuario %}
+            {% include 'components/navbar.html' %}
+        {% endif %}
         
         <!-- Conteúdo Principal -->
         <div class="flex-1 p-8 bg-gray-50">

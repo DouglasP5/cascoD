@@ -208,51 +208,13 @@ def logout():
     flash('Deslogado com sucesso!', 'success')
     return redirect(url_for('login'))
 
-@app.route('/perfil_usuario', methods=['GET', 'POST'])
+@app.route('/perfil_usuario')
 def perfil_usuario():
     if 'user_id' not in session:
-        flash('Você precisa estar logado para ver seu perfil!', 'warning')
+        flash('Você precisa fazer login primeiro!', 'warning')
         return redirect(url_for('login'))
-
+        
     usuario = Usuario.query.get(session['user_id'])
-    if not usuario:
-        session.clear()
-        flash('Usuário não encontrado!', 'danger')
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        try:
-            # Pega os dados do formulário
-            novo_username = request.form.get('username')
-            novo_email = request.form.get('email')
-
-            # Validação básica
-            if not novo_username or not novo_email:
-                flash('Por favor, preencha todos os campos!', 'danger')
-                return render_template('perfil_usuario.html', usuario=usuario)
-
-            # Atualiza os dados
-            db.session.execute(
-                'UPDATE usuario SET username = :username, email = :email WHERE id = :id',
-                {'username': novo_username, 'email': novo_email, 'id': usuario.id}
-            )
-            db.session.commit()
-
-            # Atualiza o objeto usuário com os novos dados
-            usuario.username = novo_username
-            usuario.email = novo_email
-            
-            flash('Perfil atualizado com sucesso!', 'success')
-            return redirect(url_for('perfil_usuario'))
-
-        except Exception as e:
-            db.session.rollback()
-            if 'Duplicate' in str(e):
-                flash('Este nome de usuário ou email já está em uso!', 'danger')
-            else:
-                flash('Erro ao atualizar perfil. Tente novamente.', 'danger')
-            return render_template('perfil_usuario.html', usuario=usuario)
-
     return render_template('perfil_usuario.html', usuario=usuario)
 
 @app.route('/api/perfil_usuario', methods=['GET'])
@@ -272,26 +234,39 @@ def api_perfil_usuario():
     })
 
 @app.route('/users', methods=['GET', 'POST'])
+@handle_db_connection
 def users():
     if 'user_id' not in session:
         flash('Você precisa fazer login primeiro!', 'warning')
         return redirect(url_for('login'))
-    usuario_logado = Usuario.query.get(session['user_id'])
-    if not usuario_logado.admin:
+        
+    usuario = Usuario.query.get(session['user_id'])
+    
+    if not usuario.admin:
         flash('Acesso negado: Permissões de administrador são necessárias!', 'danger')
-        return redirect(url_for('dashboard'))
+        return render_template('users.html', usuario=usuario)
+    
     if request.method == 'POST':
-        user_id = request.form['user_id']
-        tipo = request.form['tipo']
-        admin = True if request.form.get('admin') == 'on' else False
-        usuario = Usuario.query.get(user_id)
-        if usuario:
-            usuario.tipo = tipo
-            usuario.admin = admin
-            db.session.commit()
-            flash(f'Permissões de {usuario.username} atualizadas com sucesso!', 'success')
+        user_id = request.form.get('user_id')
+        tipo = request.form.get('tipo')
+        admin = request.form.get('admin') == 'on'
+        
+        try:
+            usuario_alvo = Usuario.query.get(user_id)
+            if usuario_alvo:
+                usuario_alvo.tipo = tipo
+                usuario_alvo.admin = admin
+                db.session.commit()
+                flash(f'Permissões de {usuario_alvo.username} atualizadas com sucesso!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Erro ao atualizar permissões.', 'danger')
+            app.logger.error(f"Erro ao atualizar usuário: {str(e)}")
+    
     usuarios = Usuario.query.all()
-    return render_template('users.html', usuarios=usuarios)
+    return render_template('users.html', 
+                         usuarios=usuarios, 
+                         usuario=usuario)
 
 @app.route('/deletar_usuario/<int:id>', methods=['POST'])
 def deletar_usuario(id):

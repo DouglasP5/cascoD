@@ -1,41 +1,129 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Gerenciar Usuários</title>
-</head>
-<body>
-    <h1>Gerenciar Usuários</h1>
-    <table>
-        <tr>
-            <th>Usuário</th>
-            <th>Email</th>
-            <th>Tipo</th>
-            <th>Admin</th>
-            <th>Ações</th>
-        </tr>
-        {% for usuario in usuarios %}
-        <tr>
-            <form method="post" action="{{ url_for('users') }}">
-                <td>{{ usuario.username }}</td>
-                <td>{{ usuario.email }}</td>
-                <td>
-                    <select name="tipo">
-                        <option value="participante" {% if usuario.tipo == 'participante' %}selected{% endif %}>Participante</option>
-                        <option value="lider" {% if usuario.tipo == 'lider' %}selected{% endif %}>Líder</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="checkbox" name="admin" {% if usuario.admin %}checked{% endif %}>
-                </td>
-                <td>
-                    <input type="hidden" name="user_id" value="{{ usuario.id }}">
-                    <button type="submit">Salvar</button>
-                </td>
-            </form>
-        </tr>
-        {% endfor %}
-    </table>
-    <a href="{{ url_for('dashboard') }}">Voltar ao Dashboard</a>
-</body>
-</html>
+{% extends "layouts/base.html" %}
+
+{% block title %}Registros de Usuários{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Cabeçalho -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Registros de Usuários</h1>
+        <p class="text-gray-600 mt-2">Gerencie os usuários do sistema</p>
+    </div>
+
+    {% if not usuario.admin %}
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">
+                        Você não tem permissão para acessar esta página. Apenas administradores podem visualizar os registros.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <!-- Tabela de Usuários -->
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Usuário
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Email
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Tipo
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Ações
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for usuario in usuarios %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full" src="../static/imagens/perfil_usuario/foto.svg" alt="">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                {{ usuario.username }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ usuario.email }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <form method="POST" class="inline-flex">
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <select name="tipo" onchange="this.form.submit()" 
+                                                class="text-sm rounded-full px-3 py-1 font-semibold
+                                                       {% if usuario.tipo == 'participante' %}
+                                                           text-green-800 bg-green-100
+                                                       {% else %}
+                                                           text-blue-800 bg-blue-100
+                                                       {% endif %}">
+                                            <option value="participante" {% if usuario.tipo == 'participante' %}selected{% endif %}>
+                                                Participante
+                                            </option>
+                                            <option value="pesquisador" {% if usuario.tipo == 'pesquisador' %}selected{% endif %}>
+                                                Pesquisador
+                                            </option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <form method="POST" class="inline-flex items-center">
+                                        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" name="admin" class="sr-only peer" 
+                                                   {% if usuario.admin %}checked{% endif %} 
+                                                   onchange="this.form.submit()">
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 
+                                                        peer-focus:ring-blue-300 rounded-full peer 
+                                                        peer-checked:after:translate-x-full peer-checked:after:border-white 
+                                                        after:content-[''] after:absolute after:top-[2px] after:left-[2px] 
+                                                        after:bg-white after:border-gray-300 after:border after:rounded-full 
+                                                        after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
+                                            </div>
+                                            <span class="ml-3 text-sm font-medium text-gray-900">
+                                                {{ 'Admin' if usuario.admin else 'Usuário' }}
+                                            </span>
+                                        </label>
+                                    </form>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <form action="{{ url_for('deletar_usuario', id=usuario.id) }}" method="POST" class="inline">
+                                        <button type="submit" 
+                                                class="text-red-600 hover:text-red-900 transition-colors duration-200"
+                                                onclick="return confirm('Tem certeza que deseja excluir este usuário?')">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
